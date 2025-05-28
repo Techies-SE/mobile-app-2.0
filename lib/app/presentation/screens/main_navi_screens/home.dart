@@ -123,8 +123,18 @@ class _HomeState extends State<Home> {
               },
               builder: (context, state) {
                 if (state is AppointmentFetching) {
-                  return Center(
-                    child: CupertinoActivityIndicator(),
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: Container(
+                      height: 150,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: mainBgColor),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Center(
+                        child: CupertinoActivityIndicator(),
+                      ),
+                    ),
                   );
                 } else if (state is AppointmentFetchingSuccess) {
                   return Column(
