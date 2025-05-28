@@ -1,3 +1,4 @@
+
 import 'package:mobile_app_2/Features/appointment/data/datasources/remote/appointments_remote_data.dart';
 import 'package:mobile_app_2/Features/appointment/data/models/appointment.dart';
 import 'package:mobile_app_2/Features/appointment/domain/entities/appointment_entity.dart';
@@ -9,12 +10,11 @@ class AppointmentRepoImpl implements AppointmentRepo {
   AppointmentRepoImpl({required this.appointmentRemoteData});
 
   @override
-  Future<AppointmentEntity> fetchAppointmentByUserId() async {
+  Future<List<AppointmentEntity>> fetchAppointmentByUserId() async {
     final json = await appointmentRemoteData.fetchAppointmentByUserId();
-    final appointment = Appointment.fromJson(json);
-    final appointmentEntity = appointment.toEntity();
+    final appointmentList = Appointment.fromJsonList(json);
+    return appointmentList.map((appointment) => appointment.toEntity()).toList();
 
-    return appointmentEntity;
   }
 
   @override

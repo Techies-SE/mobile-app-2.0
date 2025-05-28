@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:http/http.dart' as http;
-import 'package:mobile_app_2/Features/auth/data/datasources/local/auth_local_data_source_impl.dart';
 import 'dart:convert';
 import 'package:mobile_app_2/Features/auth/data/datasources/remote/auth_remote_data_source.dart';
 import 'package:mobile_app_2/app/utilities/api_service.dart';
@@ -37,13 +36,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         {"password": password},
       );
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        print('Chnaged Password');
+        //print('Chnaged Password');
       } else {
-        print('Fail change password ${response.statusCode}');
+       // print('Fail change password ${response.statusCode}');
         throw Exception('Fail log in');
       }
     } catch (e) {
-      print('Fail API $e');
+      //print('Fail API $e');
       throw Exception('Fail fetching API');
     }
   }

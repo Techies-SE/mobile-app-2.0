@@ -6,7 +6,7 @@ class FetchAppointment {
 
   FetchAppointment(this.appointmentRepo);
 
-  Future<AppointmentEntity> call() async {
+  Future<List<AppointmentEntity>> call() async {
     return await appointmentRepo.fetchAppointmentByUserId();
   }
 }

@@ -55,7 +55,7 @@ class _LandingState extends State<Landing> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasData && snapshot.data!) {
-          return LoginPage();
+          return MainNaviBar();
         } else if (snapshot.hasError) {
           return Center(child: Icon(Icons.error));
         } else {

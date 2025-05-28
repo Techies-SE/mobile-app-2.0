@@ -9,9 +9,9 @@ class AppointmentInitial extends AppointmentState {}
 class AppointmentFetching extends AppointmentState {}
 
 class AppointmentFetchingSuccess extends AppointmentState {
-  final AppointmentEntity appointmentEntity;
+  final List<AppointmentEntity> appointmentEntityList;
 
-  AppointmentFetchingSuccess({required this.appointmentEntity});
+  AppointmentFetchingSuccess({required this.appointmentEntityList});
 }
 
 class AppointmentFetchingFail extends AppointmentState {

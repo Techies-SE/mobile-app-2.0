@@ -1,7 +1,8 @@
 import 'package:mobile_app_2/Features/appointment/domain/entities/appointment_entity.dart';
 
 abstract class AppointmentRepo {
-  Future<AppointmentEntity> fetchAppointmentByUserId();
+  Future<List<AppointmentEntity>> fetchAppointmentByUserId();
+
   Future<void> requestAppointment(
     int patientId,
     int doctorId,
@@ -9,6 +10,7 @@ abstract class AppointmentRepo {
     String date,
     String note,
   );
+
   Future<void> rescheduledAppointment(
     int patientId,
     int doctorId,

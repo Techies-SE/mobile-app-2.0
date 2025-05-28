@@ -1,23 +1,18 @@
+import 'dart:convert';
+
 import 'package:mobile_app_2/Features/appointment/data/datasources/remote/appointments_remote_data.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobile_app_2/Features/auth/data/datasources/local/auth_local_data_source_impl.dart';
+import 'package:mobile_app_2/app/utilities/api_service.dart';
 
 class AppointmentRemoteDataImpl implements AppointmentsRemoteData {
   @override
-  Future<dynamic> fetchAppointmentByUserId() async {
+  Future<List<dynamic>> fetchAppointmentByUserId() async {
     try {
-      String uri = '';
-      final data = AuthLocalDataSourceImpl();
-      final token = data.getToken();
-      final response = await http.get(
-        Uri.parse(uri),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        },
-      );
+      final response = await ApiService().get('patients/appointments');
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        return response.body;
+        final data = json.decode(response.body);
+        return data['appointments'];
       } else {
         throw Exception('API error ${response.statusCode}');
       }
