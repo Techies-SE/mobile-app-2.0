@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const Color mainBgColor = Color(0xff3BA092);
 
@@ -17,3 +18,9 @@ const Color searchAndMore = Color(0xffF4EEEE);
 const Color cardColor = Color(0xffE6F6F4);
 
 const Color cancelButtonColor = Color(0xffE5E7EB);
+
+var appbarTestStyle = GoogleFonts.inter(
+  fontWeight: FontWeight.bold,
+  fontSize: 19,
+  color: Color(0xff404040),
+);

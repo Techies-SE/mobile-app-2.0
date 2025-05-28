@@ -25,7 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final result = await loginUsecase(event.phone_no, event.password);
-      emit(AuthLoginSuccess(token: result.token, userId: result.userId));
+      emit(AuthLoginSuccess(authEntity: result));
     } catch (e) {
       emit(AuthFail(error: e.toString()));
     }

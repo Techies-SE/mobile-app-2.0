@@ -5,6 +5,7 @@ import 'package:mobile_app_2/app/presentation/screens/main_navi_screens/profile.
 import 'package:mobile_app_2/app/presentation/screens/main_navi_screens/recommendation.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 
+// ignore: must_be_immutable
 class MainNaviBar extends StatefulWidget {
  int? pageIndex= 0;
    MainNaviBar({super.key, this.pageIndex});

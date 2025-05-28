@@ -1,23 +1,16 @@
-import 'package:mobile_app_2/Features/auth/data/datasources/local/auth_local_data_source_impl.dart';
+import 'dart:convert';
 import 'package:mobile_app_2/Features/patient/data/datasources/remote/patient_remote_data.dart';
-import 'package:http/http.dart' as http;
+import 'package:mobile_app_2/app/utilities/api_service.dart';
 
 class PatientRemoteDataImpl implements PatientRemoteData {
   @override
   Future<dynamic> getPatientInfo() async {
     try {
-      final data = AuthLocalDataSourceImpl();
-      final token = data.getToken();
-      String url = '';
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authentication': 'Bearer $token'
-        },
-      );
+      final response = await ApiService().get('patients/profile');
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        return response.body;
+        final data = json.decode(response.body);
+        final user = data['user'];
+        return user;
       } else {
         throw Exception('Error in fetching ${response.statusCode}');
       }

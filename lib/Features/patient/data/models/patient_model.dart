@@ -8,7 +8,7 @@ class PatientModel extends PatitentEntity {
     required super.citizen_id,
     required super.hn_number,
     required super.phone_no,
-    required super.password,
+    required super.date_of_birth,
     required super.id,
   });
 
@@ -17,9 +17,9 @@ class PatientModel extends PatitentEntity {
         id: json['id'],
         name: json['name'],
         citizen_id: json['citizen_id'],
-        hn_number: json['hn_numbet'],
+        hn_number: json['hn_number'],
         phone_no: json['phone_no'],
-        password: json['password']);
+        date_of_birth: json['lab_data'][0]['date_of_birth'] ?? 'none');
   }
 
   PatitentEntity toEntity() => PatitentEntity(
@@ -28,6 +28,6 @@ class PatientModel extends PatitentEntity {
         name: name,
         citizen_id: citizen_id,
         phone_no: phone_no,
-        password: password,
+        date_of_birth: date_of_birth,
       );
 }

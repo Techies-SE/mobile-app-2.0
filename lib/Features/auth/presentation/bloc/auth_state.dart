@@ -1,3 +1,5 @@
+import 'package:mobile_app_2/Features/auth/domain/entities/auth_entity.dart';
+
 abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
@@ -6,10 +8,9 @@ class AuthLoading extends AuthState {}
 
 //login
 class AuthLoginSuccess extends AuthState {
-  final String token;
-  final int userId;
+  final AuthEntity authEntity;
 
-  AuthLoginSuccess({required this.token, required this.userId});
+  AuthLoginSuccess({required this.authEntity});
 }
 
 class AuthLogoutSuccess extends AuthState {}

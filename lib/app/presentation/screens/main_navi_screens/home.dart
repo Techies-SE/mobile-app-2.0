@@ -2,11 +2,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_app_2/Features/auth/presentation/screens/login.dart';
 import 'package:mobile_app_2/app/presentation/widgets/utilities/service_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:mobile_app_2/Features/appointment/domain/entities/appointment_entity.dart';
 import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_bloc.dart';
 import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_event.dart';
 import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_state.dart';
@@ -112,7 +111,16 @@ class _HomeState extends State<Home> {
             SizedBox(
               height: 10,
             ),
-            BlocBuilder<AppointmentBloc, AppointmentState>(
+            BlocConsumer<AppointmentBloc, AppointmentState>(
+              listener: (context, state) {
+                if (state is AppointmentFetchingFail &&
+                    state.error.contains('403')) {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      (route) => false);
+                }
+              },
               builder: (context, state) {
                 if (state is AppointmentFetching) {
                   return Center(
@@ -325,7 +333,7 @@ class _HomeState extends State<Home> {
                     height: 16,
                   ),
                   Card(
-                    color: Color(0xffF9E3E3),
+                    color: Color.fromARGB(255, 172, 219, 210),
                     elevation: 3,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -358,7 +366,7 @@ class _HomeState extends State<Home> {
                                 width: 200,
                                 child: Text(
                                   'Check reliable AI Recommendations',
-                                   maxLines: 1,
+                                  maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.inter(
                                     fontSize: 10,
@@ -373,9 +381,8 @@ class _HomeState extends State<Home> {
                           ),
                           Expanded(
                               child: ElevatedButton(
-                              
                             style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.zero,
+                                padding: EdgeInsets.zero,
                                 backgroundColor: mainBgColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -402,101 +409,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
-
-Widget _buildAppointmentList(List<AppointmentEntity> appointments) {
-  return Column(
-    children: [
-      Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(
-          'Total Appointments: ${appointments.length}',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ),
-      Expanded(
-        child: ListView.builder(
-          itemCount: appointments.length,
-          itemBuilder: (context, index) {
-            final appointment = appointments[index];
-            return _buildAppointmentCard(appointment);
-          },
-        ),
-      ),
-    ],
-  );
-}
-
-Widget _buildAppointmentCard(AppointmentEntity appointment) {
-  // Format the date and time
-  final date = DateFormat('MMM d, y').format(DateTime.parse(appointment.date));
-  final time = DateFormat('h:mm a').format(
-    DateFormat('HH:mm:ss').parse(appointment.time.split('.')[0]),
-  );
-
-  // Color based on status
-  Color statusColor;
-  switch (appointment.status.toLowerCase()) {
-    case 'scheduled':
-      statusColor = Colors.green;
-      break;
-    case 'pending':
-      statusColor = Colors.orange;
-      break;
-    case 'canceled':
-      statusColor = Colors.red;
-      break;
-    default:
-      statusColor = Colors.grey;
-  }
-
-  return Card(
-    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            appointment.doctor,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(appointment.specialization),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              const Icon(Icons.calendar_today, size: 16),
-              const SizedBox(width: 8),
-              Text(date),
-              const SizedBox(width: 16),
-              const Icon(Icons.access_time, size: 16),
-              const SizedBox(width: 8),
-              Text(time),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  appointment.status.toUpperCase(),
-                  style: TextStyle(
-                    color: statusColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
 }

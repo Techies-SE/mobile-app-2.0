@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_app_2/Features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:mobile_app_2/Features/auth/presentation/bloc/auth_event.dart';
 import 'package:mobile_app_2/Features/auth/presentation/bloc/auth_state.dart';
+import 'package:mobile_app_2/app/presentation/screens/main_navi_bar.dart';
 import 'package:mobile_app_2/app/presentation/screens/otp_screen.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 
@@ -39,9 +40,16 @@ class _LoginPageState extends State<LoginPage> {
               // ScaffoldMessenger.of(context).showSnackBar(
               //   SnackBar(content: Text('Login Successful: ${state.token}')),
               // );
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => OtpScreen()));
-              print(state.userId);
+              if (state.authEntity.firstTimeLogin == false) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainNaviBar()),
+                  (route) => false,
+                );
+              } else {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => OtpScreen()));
+              }
             } else if (state is AuthFail) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Login Failed: ${state.error}')),
