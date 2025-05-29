@@ -5,7 +5,7 @@ const Color mainBgColor = Color(0xff3BA092);
 
 const Color goldenColor = Color(0xffC0B257);
 
-const Color bgColor = Color(0xffFFFBFB);
+Color? bgColor =Colors.grey[50];
 
 const Color textColorSecondary = Color(0xff595959);
 

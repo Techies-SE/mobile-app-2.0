@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_app_2/app/presentation/screens/appointment/all_category.dart';
+import 'package:mobile_app_2/app/presentation/screens/schedule/all_departments.dart';
 import 'package:mobile_app_2/app/presentation/screens/appointment/cancelled.dart';
 import 'package:mobile_app_2/app/presentation/screens/appointment/completed.dart';
 import 'package:mobile_app_2/app/presentation/screens/appointment/upcoming.dart';
@@ -43,7 +43,7 @@ class _AppointmentState extends State<Appointment> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AllCategories(),
+                          builder: (context) => AllCategory(),
                         ),
                       );
                     },

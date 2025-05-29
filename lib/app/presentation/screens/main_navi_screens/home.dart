@@ -38,6 +38,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
@@ -137,6 +138,10 @@ class _HomeState extends State<Home> {
                     ),
                   );
                 } else if (state is AppointmentFetchingSuccess) {
+                  int counts = state.appointmentEntityList
+                      .where((appointment) => appointment.status == 'scheduled')
+                      .toList()
+                      .length;
                   return Column(
                     children: [
                       SizedBox(
@@ -144,10 +149,10 @@ class _HomeState extends State<Home> {
                         child: PageView.builder(
                           controller: _pageController,
                           scrollDirection: Axis.horizontal,
-                          itemCount: state.appointmentEntityList.length,
+                          itemCount: counts,
                           itemBuilder: (context, index) {
                             final appointment =
-                                state.appointmentEntityList[index];
+                                state.appointmentEntityList.where((appointment)=> appointment.status == 'scheduled').toList()[index];
                             return Padding(
                               padding:
                                   const EdgeInsets.only(left: 20.0, right: 20),
@@ -171,7 +176,7 @@ class _HomeState extends State<Home> {
                       ),
                       SmoothPageIndicator(
                         controller: _pageController,
-                        count: state.appointmentEntityList.length,
+                        count: counts,
                         effect: WormEffect(
                           dotHeight: 11.31,
                           dotWidth: 11.31,

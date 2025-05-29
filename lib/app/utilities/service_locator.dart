@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:mobile_app_2/Features/appointment/data/datasources/remote/appointment_remote_data_impl.dart';
 import 'package:mobile_app_2/Features/appointment/data/repositories/appointment_repo_impl.dart';
+import 'package:mobile_app_2/Features/appointment/domain/usecases/confirm_rescheduled_appointment.dart';
 import 'package:mobile_app_2/Features/appointment/domain/usecases/fetch_appointment.dart';
 import 'package:mobile_app_2/Features/appointment/domain/usecases/request_appointment.dart';
 import 'package:mobile_app_2/Features/appointment/domain/usecases/reschedule_appointment.dart';
@@ -17,6 +18,11 @@ import 'package:mobile_app_2/Features/patient/data/datasources/remote/patient_re
 import 'package:mobile_app_2/Features/patient/data/repositories/patient_repo_impl.dart';
 import 'package:mobile_app_2/Features/patient/domain/usecases/get_patient_info.dart';
 import 'package:mobile_app_2/Features/patient/presentaion/bloc/patient_cubit.dart';
+import 'package:mobile_app_2/Features/schedule/data/datasources/schedule_remote_impl.dart';
+import 'package:mobile_app_2/Features/schedule/data/schedule_repo_impl.dart';
+import 'package:mobile_app_2/Features/schedule/domain/repositories.dart';
+import 'package:mobile_app_2/Features/schedule/presentation/department/bloc/department_bloc.dart';
+import 'package:mobile_app_2/Features/schedule/presentation/doctor/bloc/doctor_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -57,6 +63,8 @@ void setupLocator() {
   getIt.registerLazySingleton(
       () => FetchAppointment(getIt<AppointmentRepoImpl>()));
   getIt.registerLazySingleton(
+      () => ConfirmRescheduledAppointment(getIt<AppointmentRepoImpl>()));
+  getIt.registerLazySingleton(
       () => RequestAppointment(getIt<AppointmentRepoImpl>()));
   getIt.registerLazySingleton(
       () => RescheduleAppointment(getIt<AppointmentRepoImpl>()));
@@ -64,5 +72,17 @@ void setupLocator() {
         fetchAppointment: getIt<FetchAppointment>(),
         requestAppointment: getIt<RequestAppointment>(),
         rescheduleAppointment: getIt<RescheduleAppointment>(),
+        confirmRescheduledAppointment: getIt<ConfirmRescheduledAppointment>(),
       ));
+
+  //schedule ( dapartment & doctor)
+  getIt.registerLazySingleton<ScheduleRemoteImpl>(() => ScheduleRemoteImpl());
+  //department
+  getIt.registerLazySingleton<DepartmentRepository>(() =>
+      DepartmentRepositoryImpl(remoteDataSource: getIt<ScheduleRemoteImpl>()));
+  getIt.registerFactory(() => DepartmentBloc(repository: getIt<DepartmentRepositoryImpl>()));
+  //doctor
+  getIt.registerLazySingleton<DoctorRepositoryImpl>(() =>
+      DoctorRepositoryImpl(remoteDataSource: getIt<ScheduleRemoteImpl>()));
+  getIt.registerFactory(() => DoctorBloc(repository: getIt<DoctorRepositoryImpl>()));
 }

@@ -30,4 +30,14 @@ class ApiService {
     );
     return response;
   }
+
+  Future<http.Response> put(String endPoint, dynamic body) async {
+    final headers = await getHeaders();
+    final response = await http.post(
+      Uri.parse('https://backend-pg-cm2b.onrender.com/$endPoint'),
+      headers: headers,
+      body: jsonEncode(body),
+    );
+    return response;
+  }
 }

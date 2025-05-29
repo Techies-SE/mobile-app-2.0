@@ -15,4 +15,7 @@ abstract class AppointmentsRemoteData {
     String date,
     String note,
   );
+  Future<void> confirmReschsduledAppointment(
+    int appointmentId,
+  );
 }

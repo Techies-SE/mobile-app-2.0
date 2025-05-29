@@ -22,6 +22,21 @@ class AppointmentRemoteDataImpl implements AppointmentsRemoteData {
   }
 
   @override
+  Future<void> confirmReschsduledAppointment(int appointmentId) async {
+    try {
+      final response = await ApiService()
+          .put('patients/appointments/$appointmentId/confirm', {});
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return json.decode(response.body);
+      }else{
+         throw Exception('Fail api ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Fail api $e');
+    }
+  }
+
+  @override
   Future<void> requestAppointment(
     int patientId,
     int doctorId,

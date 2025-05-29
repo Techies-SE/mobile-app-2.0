@@ -19,4 +19,8 @@ abstract class AppointmentRepo {
     String date,
     String note,
   );
+
+  Future<void> confirmRescheduledAppoinment(
+    int appointmentId,
+  );
 }

@@ -2,6 +2,11 @@ abstract class AppointmentEvent {}
 
 class FetchAppointmentByUserIdEvent extends AppointmentEvent {}
 
+class ConfirmRescheduledAppointmentEvent extends AppointmentEvent {
+  final int appointmentId;
+  ConfirmRescheduledAppointmentEvent({required this.appointmentId});
+}
+
 class RequestAppointmentEvent extends AppointmentEvent {
   final int patientId;
   final int doctorId;

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_bloc.dart';
 import 'package:mobile_app_2/Features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:mobile_app_2/Features/patient/presentaion/bloc/patient_cubit.dart';
+import 'package:mobile_app_2/Features/schedule/presentation/department/bloc/department_bloc.dart';
+import 'package:mobile_app_2/Features/schedule/presentation/doctor/bloc/doctor_bloc.dart';
 import 'package:mobile_app_2/app/presentation/screens/landing.dart';
 import 'package:mobile_app_2/app/utilities/service_locator.dart';
 
@@ -22,6 +24,8 @@ class MobileApp extends StatelessWidget {
         BlocProvider<AuthBloc>(create: (_) => getIt<AuthBloc>()),
         BlocProvider<PatientCubit>(create: (_) => getIt<PatientCubit>()),
         BlocProvider<AppointmentBloc>(create: (_) => getIt<AppointmentBloc>()),
+         BlocProvider<DepartmentBloc>(create: (_)=> getIt<DepartmentBloc>()),
+        BlocProvider<DoctorBloc>(create: (_)=> getIt<DoctorBloc>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
