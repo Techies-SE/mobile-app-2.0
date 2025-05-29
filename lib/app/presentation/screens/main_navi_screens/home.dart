@@ -3,6 +3,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app_2/Features/auth/presentation/screens/login.dart';
+import 'package:mobile_app_2/app/presentation/screens/medical_checkup/medical_ceckup.dart';
+import 'package:mobile_app_2/app/presentation/screens/schedule/all_departments.dart';
 import 'package:mobile_app_2/app/presentation/widgets/utilities/service_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +15,7 @@ import 'package:mobile_app_2/app/presentation/screens/main_navi_bar.dart';
 import 'package:mobile_app_2/app/presentation/widgets/appointments/appointment_card.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -24,6 +27,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   //ScrollController _scrollController = ScrollController();
   final _pageController = PageController();
+  bool canMakeCall = true;
 
   @override
   void initState() {
@@ -151,8 +155,10 @@ class _HomeState extends State<Home> {
                           scrollDirection: Axis.horizontal,
                           itemCount: counts,
                           itemBuilder: (context, index) {
-                            final appointment =
-                                state.appointmentEntityList.where((appointment)=> appointment.status == 'scheduled').toList()[index];
+                            final appointment = state.appointmentEntityList
+                                .where((appointment) =>
+                                    appointment.status == 'scheduled')
+                                .toList()[index];
                             return Padding(
                               padding:
                                   const EdgeInsets.only(left: 20.0, right: 20),
@@ -238,7 +244,7 @@ class _HomeState extends State<Home> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MainNaviBar(),
+                                builder: (context) => MedicalCheckup(),
                               ),
                             );
                           },
@@ -268,7 +274,14 @@ class _HomeState extends State<Home> {
                       ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AllCategory(),
+                              ),
+                            );
+                          },
                           child: ServiceCard(
                             image: 'assets/images/search.png',
                             service: 'Find Doctor',
@@ -330,7 +343,25 @@ class _HomeState extends State<Home> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 )),
-                            onPressed: () {},
+                            onPressed: () async {
+                              canLaunchUrl(
+                                      Uri(scheme: 'tel', path: '+66610371574'))
+                                  .then((bool result) {
+                                setState(() {
+                                  canMakeCall = result;
+                                });
+                              });
+                              if (canMakeCall) {
+                                await launchUrl(
+                                    Uri(scheme: 'tel', path: '66610371574'));
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Cant make phone call'),
+                                  ),
+                                );
+                              }
+                            },
                             child: Text(
                               'Call Now',
                               style: GoogleFonts.inter(
@@ -402,7 +433,16 @@ class _HomeState extends State<Home> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 )),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MainNaviBar(
+                                    pageIndex: 1,
+                                  ),
+                                ),
+                              );
+                            },
                             child: Text(
                               'View Now',
                               style: GoogleFonts.inter(

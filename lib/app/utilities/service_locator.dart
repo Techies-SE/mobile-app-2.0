@@ -19,6 +19,9 @@ import 'package:mobile_app_2/Features/patient/data/datasources/remote/patient_re
 import 'package:mobile_app_2/Features/patient/data/repositories/patient_repo_impl.dart';
 import 'package:mobile_app_2/Features/patient/domain/usecases/get_patient_info.dart';
 import 'package:mobile_app_2/Features/patient/presentaion/bloc/patient_cubit.dart';
+import 'package:mobile_app_2/Features/recommendation/data/recommendation_repo_impl.dart';
+import 'package:mobile_app_2/Features/recommendation/data/remote/recom_remote_data_impl.dart';
+import 'package:mobile_app_2/Features/recommendation/presentation/bloc/recommendation_cubit.dart';
 import 'package:mobile_app_2/Features/schedule/data/datasources/schedule_remote_impl.dart';
 import 'package:mobile_app_2/Features/schedule/data/schedule_repo_impl.dart';
 import 'package:mobile_app_2/Features/schedule/domain/repositories.dart';
@@ -84,9 +87,18 @@ void setupLocator() {
   //department
   getIt.registerLazySingleton<DepartmentRepository>(() =>
       DepartmentRepositoryImpl(remoteDataSource: getIt<ScheduleRemoteImpl>()));
-  getIt.registerFactory(() => DepartmentBloc(repository: getIt<DepartmentRepositoryImpl>()));
+  getIt.registerFactory(
+      () => DepartmentBloc(repository: getIt<DepartmentRepositoryImpl>()));
   //doctor
   getIt.registerLazySingleton<DoctorRepositoryImpl>(() =>
       DoctorRepositoryImpl(remoteDataSource: getIt<ScheduleRemoteImpl>()));
-  getIt.registerFactory(() => DoctorBloc(repository: getIt<DoctorRepositoryImpl>()));
+  getIt.registerFactory(
+      () => DoctorBloc(repository: getIt<DoctorRepositoryImpl>()));
+
+  //recommendations
+  getIt.registerLazySingleton<RecomRemoteDataImpl>(() => RecomRemoteDataImpl());
+  getIt.registerLazySingleton<RecommendationRepoImpl>(
+      () => RecommendationRepoImpl(getIt<RecomRemoteDataImpl>()));
+  getIt.registerFactory(
+      () => RecommendationCubit(getIt<RecommendationRepoImpl>()));
 }

@@ -16,7 +16,7 @@ class MainNaviBar extends StatefulWidget {
 class _MainNaviBarState extends State<MainNaviBar> {
   List<Widget> screens = [
     Home(),
-    Recommendation(),
+    RecommendationsScreen(),
     Appointment(),
     Profile(),
   ];

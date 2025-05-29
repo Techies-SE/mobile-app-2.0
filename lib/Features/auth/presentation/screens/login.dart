@@ -7,7 +7,7 @@ import 'package:mobile_app_2/Features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:mobile_app_2/Features/auth/presentation/bloc/auth_event.dart';
 import 'package:mobile_app_2/Features/auth/presentation/bloc/auth_state.dart';
 import 'package:mobile_app_2/app/presentation/screens/main_navi_bar.dart';
-import 'package:mobile_app_2/app/presentation/screens/otp_screen.dart';
+import 'package:mobile_app_2/app/presentation/screens/auth/otp_screen.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 
 class LoginPage extends StatefulWidget {
