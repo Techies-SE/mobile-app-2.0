@@ -8,17 +8,15 @@ class ConfirmRescheduledAppointmentEvent extends AppointmentEvent {
 }
 
 class RequestAppointmentEvent extends AppointmentEvent {
-  final int patientId;
   final int doctorId;
   final String time;
   final String date;
-  final String note;
+  final String? note;
   RequestAppointmentEvent({
-    required this.patientId,
     required this.doctorId,
     required this.date,
     required this.time,
-    required this.note,
+     this.note,
   });
 }
 

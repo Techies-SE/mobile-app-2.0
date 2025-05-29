@@ -4,11 +4,10 @@ abstract class AppointmentRepo {
   Future<List<AppointmentEntity>> fetchAppointmentByUserId();
 
   Future<void> requestAppointment(
-    int patientId,
     int doctorId,
     String time,
     String date,
-    String note,
+    String? note,
   );
 
   Future<void> rescheduledAppointment(

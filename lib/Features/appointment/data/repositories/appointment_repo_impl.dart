@@ -24,14 +24,12 @@ class AppointmentRepoImpl implements AppointmentRepo {
 
   @override
   Future<void> requestAppointment(
-    int patientId,
     int doctorId,
     String time,
     String date,
-    String note,
+    String? note,
   ) async {
     await appointmentRemoteData.requestAppointment(
-      patientId,
       doctorId,
       time,
       date,

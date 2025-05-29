@@ -3,9 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_bloc.dart';
+import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_event.dart';
+import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_state.dart';
 import 'package:mobile_app_2/Features/schedule/domain/entites.dart';
 import 'package:mobile_app_2/Features/schedule/presentation/doctor/bloc/doctor_bloc.dart';
 import 'package:mobile_app_2/Features/schedule/presentation/doctor/bloc/doctor_state.dart';
+import 'package:mobile_app_2/app/presentation/screens/main_navi_bar.dart';
 import 'package:mobile_app_2/app/presentation/widgets/utilities/hospital_colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -21,419 +25,552 @@ class _DoctorScreenState extends State<DoctorScreen> {
   DateTime _focusedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
   String? _selectedTimeSlot;
+  final TextEditingController _noteController = TextEditingController();
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: HospitalColors.primaryColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'Book Appointment',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+    return BlocListener<AppointmentBloc, AppointmentState>(
+      listener: (context, state) {
+        // Always close any open dialogs before showing a new one
+        if (Navigator.canPop(context)) Navigator.pop(context);
+
+        if (state is AppointmentRequesting) {
+          _showLoadingDialog(context);
+        } else if (state is AppointmentRequestingSuccess) {
+          _showSuccessDialog(context);
+        } else if (state is AppointmentRequestingFail) {
+          _showFailDialog(
+            context,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppBar(
+          backgroundColor: HospitalColors.primaryColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
           ),
+          title: Text(
+            'Book Appointment',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: BlocBuilder<DoctorBloc, DoctorState>(
-        builder: (context, state) {
-          if (state is DoctorLoading) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(HospitalColors.primaryColor),
-              ),
-            );
-          } else if (state is DoctorError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+        body: BlocBuilder<DoctorBloc, DoctorState>(
+          builder: (context, state) {
+            if (state is DoctorLoading) {
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      HospitalColors.primaryColor),
+                ),
+              );
+            } else if (state is DoctorError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red[300],
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Something went wrong',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: HospitalColors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      state.message,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: HospitalColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else if (state is DoctorLoaded) {
+              return Column(
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.red[300],
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Something went wrong',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: HospitalColors.textPrimary,
+                  // Doctor Header
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: HospitalColors.primaryColor,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(24),
+                        bottomRight: Radius.circular(24),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(40),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                                width: 2,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.person,
+                              color: Colors.white,
+                              size: 40,
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  state.doctor.name,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  state.doctor.specialization,
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                      size: 20,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      '4.8 (127 reviews)',
+                                      style: TextStyle(
+                                        color: Colors.white.withOpacity(0.9),
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    state.message,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: HospitalColors.textSecondary,
+
+                  // Calendar and Schedule Content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Calendar Section
+                          Container(
+                            margin: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.calendar_today,
+                                        color: HospitalColors.primaryColor,
+                                        size: 24,
+                                      ),
+                                      SizedBox(width: 12),
+                                      Text(
+                                        'Select Date',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: HospitalColors.textPrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                TableCalendar(
+                                  firstDay: DateTime.now(),
+                                  lastDay:
+                                      DateTime.now().add(Duration(days: 90)),
+                                  focusedDay: _focusedDay,
+                                  calendarFormat: _calendarFormat,
+                                  selectedDayPredicate: (day) {
+                                    return isSameDay(_selectedDay, day);
+                                  },
+                                  availableGestures: AvailableGestures.all,
+                                  onDaySelected: (selectedDay, focusedDay) {
+                                    setState(() {
+                                      _selectedDay = selectedDay;
+                                      _focusedDay = focusedDay;
+                                      _selectedTimeSlot =
+                                          null; // Reset time slot selection
+                                    });
+                                  },
+                                  onFormatChanged: (format) {
+                                    setState(() {
+                                      _calendarFormat = format;
+                                    });
+                                  },
+                                  calendarStyle: CalendarStyle(
+                                    outsideDaysVisible: false,
+                                    // Selected day styling
+                                    selectedDecoration: BoxDecoration(
+                                      color: HospitalColors.primaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    selectedTextStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                    // Today styling
+                                    todayDecoration: BoxDecoration(
+                                      color: HospitalColors.primaryLight,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    todayTextStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                    // Default day styling
+                                    defaultTextStyle: TextStyle(
+                                      color: HospitalColors.textPrimary,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    // Weekend styling
+                                    weekendTextStyle: TextStyle(
+                                      color: HospitalColors.textSecondary,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    // Outside days styling
+                                    outsideTextStyle: TextStyle(
+                                      color: Colors.grey[400],
+                                      fontSize: 16,
+                                    ),
+                                    // Marker styling
+                                    markerDecoration: BoxDecoration(
+                                      color: HospitalColors.successGreen,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    markersMaxCount: 3,
+                                    markerSize: 6.0,
+                                    markerMargin:
+                                        EdgeInsets.symmetric(horizontal: 1.0),
+                                    // Cell styling
+                                    cellMargin: EdgeInsets.all(4.0),
+                                    cellPadding: EdgeInsets.zero,
+                                    cellAlignment: Alignment.center,
+                                  ),
+                                  headerStyle: HeaderStyle(
+                                    formatButtonVisible: false,
+                                    titleCentered: true,
+                                    leftChevronVisible: true,
+                                    rightChevronVisible: true,
+                                    leftChevronIcon: Icon(
+                                      Icons.chevron_left,
+                                      color: HospitalColors.primaryColor,
+                                      size: 24,
+                                    ),
+                                    rightChevronIcon: Icon(
+                                      Icons.chevron_right,
+                                      color: HospitalColors.primaryColor,
+                                      size: 24,
+                                    ),
+                                    titleTextStyle: TextStyle(
+                                      color: HospitalColors.textPrimary,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    headerPadding:
+                                        EdgeInsets.symmetric(vertical: 8.0),
+                                    headerMargin: EdgeInsets.only(bottom: 8.0),
+                                  ),
+                                  // Days of week styling - THIS IS THE KEY ADDITION
+                                  daysOfWeekStyle: DaysOfWeekStyle(
+                                    weekendStyle: TextStyle(
+                                      color: HospitalColors.primaryColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                    weekdayStyle: TextStyle(
+                                      color: HospitalColors.textPrimary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                    dowTextFormatter: (date, locale) {
+                                      // This will show abbreviated day names (Sun, Mon, Tue, etc.)
+                                      return DateFormat.E(locale)
+                                          .format(date)
+                                          .toUpperCase();
+                                    },
+                                  ),
+                                  // Row height for better spacing
+                                  rowHeight: 48.0,
+                                  daysOfWeekHeight: 32.0,
+                                  eventLoader: (day) {
+                                    return _getEventsForDay(
+                                        day, state.doctor.schedules ?? []);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Available Time Slots
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.access_time,
+                                        color: HospitalColors.primaryColor,
+                                        size: 24,
+                                      ),
+                                      SizedBox(width: 12),
+                                      Text(
+                                        'Available Time Slots',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: HospitalColors.textPrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                  child: Text(
+                                    _getSelectedDateText(),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: HospitalColors.textSecondary,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 16),
+                                _buildTimeSlots(state.doctor.schedules ?? []),
+                                SizedBox(height: 16),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 16),
+
+                          // Notes Section
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.note_add,
+                                        color: HospitalColors.primaryColor,
+                                        size: 24,
+                                      ),
+                                      SizedBox(width: 12),
+                                      Text(
+                                        'Add Note (Optional)',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: HospitalColors.textPrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Describe your symptoms or reason for the appointment',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: HospitalColors.textSecondary,
+                                        ),
+                                      ),
+                                      SizedBox(height: 12),
+                                      TextField(
+                                        controller: _noteController,
+                                        maxLines: 4,
+                                        maxLength: 500,
+                                        decoration: InputDecoration(
+                                          hintText:
+                                              'Enter your symptoms, concerns, or any additional information...',
+                                          hintStyle: TextStyle(
+                                            color: Colors.grey[400],
+                                            fontSize: 14,
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              color: Colors.grey[300]!,
+                                              width: 1,
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              color:
+                                                  HospitalColors.primaryColor,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            borderSide: BorderSide(
+                                              color: Colors.grey[300]!,
+                                              width: 1,
+                                            ),
+                                          ),
+                                          contentPadding: EdgeInsets.all(16),
+                                          counterStyle: TextStyle(
+                                            color: HospitalColors.textSecondary,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        style: TextStyle(
+                                          color: HospitalColors.textPrimary,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 100), // Space for floating button
+                        ],
+                      ),
                     ),
                   ),
                 ],
-              ),
-            );
-          } else if (state is DoctorLoaded) {
-            return Column(
-              children: [
-                // Doctor Header
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: HospitalColors.primaryColor,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(24),
-                      bottomRight: Radius.circular(24),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(40),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.3),
-                              width: 2,
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                state.doctor.name,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                state.doctor.specialization,
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
-                                  fontSize: 16,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                    size: 20,
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    '4.8 (127 reviews)',
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.9),
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Calendar and Schedule Content
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Calendar Section
-                        Container(
-                          margin: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
-                                offset: Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(16),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.calendar_today,
-                                      color: HospitalColors.primaryColor,
-                                      size: 24,
-                                    ),
-                                    SizedBox(width: 12),
-                                    Text(
-                                      'Select Date',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: HospitalColors.textPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              TableCalendar(
-                                firstDay: DateTime.now(),
-                                lastDay: DateTime.now().add(Duration(days: 90)),
-                                focusedDay: _focusedDay,
-                                calendarFormat: _calendarFormat,
-                                selectedDayPredicate: (day) {
-                                  return isSameDay(_selectedDay, day);
-                                },
-                                availableGestures: AvailableGestures.all,
-                                onDaySelected: (selectedDay, focusedDay) {
-                                  setState(() {
-                                    _selectedDay = selectedDay;
-                                    _focusedDay = focusedDay;
-                                    _selectedTimeSlot =
-                                        null; // Reset time slot selection
-                                  });
-                                },
-                                onFormatChanged: (format) {
-                                  setState(() {
-                                    _calendarFormat = format;
-                                  });
-                                },
-                                calendarStyle: CalendarStyle(
-                                  outsideDaysVisible: false,
-                                  // Selected day styling
-                                  selectedDecoration: BoxDecoration(
-                                    color: HospitalColors.primaryColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  selectedTextStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                  // Today styling
-                                  todayDecoration: BoxDecoration(
-                                    color: HospitalColors.primaryLight,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  todayTextStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                  // Default day styling
-                                  defaultTextStyle: TextStyle(
-                                    color: HospitalColors.textPrimary,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  // Weekend styling
-                                  weekendTextStyle: TextStyle(
-                                    color: HospitalColors.textSecondary,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  // Outside days styling
-                                  outsideTextStyle: TextStyle(
-                                    color: Colors.grey[400],
-                                    fontSize: 16,
-                                  ),
-                                  // Marker styling
-                                  markerDecoration: BoxDecoration(
-                                    color: HospitalColors.successGreen,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  markersMaxCount: 3,
-                                  markerSize: 6.0,
-                                  markerMargin:
-                                      EdgeInsets.symmetric(horizontal: 1.0),
-                                  // Cell styling
-                                  cellMargin: EdgeInsets.all(4.0),
-                                  cellPadding: EdgeInsets.zero,
-                                  cellAlignment: Alignment.center,
-                                ),
-                                headerStyle: HeaderStyle(
-                                  formatButtonVisible: false,
-                                  titleCentered: true,
-                                  leftChevronVisible: true,
-                                  rightChevronVisible: true,
-                                  leftChevronIcon: Icon(
-                                    Icons.chevron_left,
-                                    color: HospitalColors.primaryColor,
-                                    size: 24,
-                                  ),
-                                  rightChevronIcon: Icon(
-                                    Icons.chevron_right,
-                                    color: HospitalColors.primaryColor,
-                                    size: 24,
-                                  ),
-                                  titleTextStyle: TextStyle(
-                                    color: HospitalColors.textPrimary,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  headerPadding:
-                                      EdgeInsets.symmetric(vertical: 8.0),
-                                  headerMargin: EdgeInsets.only(bottom: 8.0),
-                                ),
-                                // Days of week styling - THIS IS THE KEY ADDITION
-                                daysOfWeekStyle: DaysOfWeekStyle(
-                                  weekendStyle: TextStyle(
-                                    color: HospitalColors.primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                  weekdayStyle: TextStyle(
-                                    color: HospitalColors.textPrimary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                  dowTextFormatter: (date, locale) {
-                                    // This will show abbreviated day names (Sun, Mon, Tue, etc.)
-                                    return DateFormat.E(locale)
-                                        .format(date)
-                                        .toUpperCase();
-                                  },
-                                ),
-                                // Row height for better spacing
-                                rowHeight: 48.0,
-                                daysOfWeekHeight: 32.0,
-                                eventLoader: (day) {
-                                  return _getEventsForDay(
-                                      day, state.doctor.schedules ?? []);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Available Time Slots
-                        Container(
-                          margin: EdgeInsets.symmetric(horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
-                                offset: Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(16),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.access_time,
-                                      color: HospitalColors.primaryColor,
-                                      size: 24,
-                                    ),
-                                    SizedBox(width: 12),
-                                    Text(
-                                      'Available Time Slots',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: HospitalColors.textPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  _getSelectedDateText(),
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: HospitalColors.textSecondary,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 16),
-                              _buildTimeSlots(state.doctor.schedules ?? []),
-                              SizedBox(height: 16),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: 100), // Space for floating button
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
-          return Container();
-        },
-      ),
-      floatingActionButton: BlocBuilder<DoctorBloc, DoctorState>(
-        builder: (context, state) {
-          if (state is DoctorLoaded) {
-            return Container(
-              width: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              child: FloatingActionButton.extended(
-                onPressed: _selectedTimeSlot != null
-                    ? () => _requestAppointment(context, state.doctor)
-                    : null,
-                backgroundColor: _selectedTimeSlot != null
-                    ? HospitalColors.primaryColor
-                    : Colors.grey[400],
-                icon: Icon(
-                  Icons.event_available,
-                  color: Colors.white,
-                ),
-                label: Text(
-                  'Request Appointment',
-                  style: TextStyle(
+              );
+            }
+            return Container();
+          },
+        ),
+        floatingActionButton: BlocBuilder<DoctorBloc, DoctorState>(
+          builder: (context, state) {
+            if (state is DoctorLoaded) {
+              return Container(
+                width: double.infinity,
+                margin: EdgeInsets.symmetric(horizontal: 16),
+                child: FloatingActionButton.extended(
+                  onPressed: _selectedTimeSlot != null
+                      ? () {
+                          _requestAppointment(context, state.doctor);
+                        }
+                      : null,
+                  backgroundColor: _selectedTimeSlot != null
+                      ? HospitalColors.primaryColor
+                      : Colors.grey[400],
+                  icon: Icon(
+                    Icons.event_available,
                     color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  ),
+                  label: Text(
+                    'Request Appointment',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
-            );
-          }
-          return Container();
-        },
+              );
+            }
+            return Container();
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -629,6 +766,13 @@ class _DoctorScreenState extends State<DoctorScreen> {
             Text('Date: ${_getSelectedDateText()}'),
             SizedBox(height: 8),
             Text('Time: $_selectedTimeSlot'),
+            if (_noteController.text.isNotEmpty) ...[
+              SizedBox(height: 8),
+              Text(
+                'Note: ${_noteController.text}',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
             SizedBox(height: 16),
             Text(
               'Please confirm your appointment request. You will receive a confirmation once the doctor approves.',
@@ -649,8 +793,17 @@ class _DoctorScreenState extends State<DoctorScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
-              _showSuccessDialog(context);
+              final selectedDate =
+                  DateFormat('yyyy-MM-dd').format(_selectedDay);
+              String? startTime = _selectedTimeSlot?.split('-')[0];
+              context.read<AppointmentBloc>().add(
+                    RequestAppointmentEvent(
+                      doctorId: doctor.id,
+                      date: selectedDate,
+                      time: '${startTime!.trim()}:00',
+                      note: _noteController.text,
+                    ),
+                  );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: HospitalColors.primaryColor,
@@ -696,7 +849,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
             Text(
               'Appointment Requested!',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: HospitalColors.textPrimary,
               ),
@@ -717,8 +870,15 @@ class _DoctorScreenState extends State<DoctorScreen> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Go back to previous screen
+                Future.delayed(Duration(milliseconds: 100), () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => MainNaviBar()),
+                    (route) => false,
+                  );
+                });
+                Navigator.pop(
+                    context); // Close dialog first/ Go back to previous screen
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: HospitalColors.primaryColor,
@@ -738,6 +898,156 @@ class _DoctorScreenState extends State<DoctorScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showFailDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.error,
+                color: Colors.red,
+                size: 50,
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Request Failed!',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: HospitalColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: 12),
+            Text(
+              'Sorry, we couldn\'t process your appointment request. Please check your connection and try again.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: HospitalColors.textSecondary,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: HospitalColors.primaryColor),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: HospitalColors.primaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    // Add retry logic here
+                    // _retryAppointmentRequest();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: HospitalColors.primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: Text(
+                    'Retry',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: HospitalColors.primaryColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  HospitalColors.primaryColor,
+                ),
+                strokeWidth: 3,
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Processing Request...',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: HospitalColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: 12),
+            Text(
+              'Please wait while we process your appointment request.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: HospitalColors.textSecondary,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

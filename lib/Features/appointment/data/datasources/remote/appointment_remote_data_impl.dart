@@ -28,8 +28,8 @@ class AppointmentRemoteDataImpl implements AppointmentsRemoteData {
           .put('patients/appointments/$appointmentId/confirm', {});
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return json.decode(response.body);
-      }else{
-         throw Exception('Fail api ${response.statusCode}');
+      } else {
+        throw Exception('Fail api ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Fail api $e');
@@ -38,27 +38,21 @@ class AppointmentRemoteDataImpl implements AppointmentsRemoteData {
 
   @override
   Future<void> requestAppointment(
-    int patientId,
     int doctorId,
     String time,
     String date,
-    String note,
+    String? note,
   ) async {
     try {
-      String uri = '';
-      final data = AuthLocalDataSourceImpl();
-      final token = data.getToken();
-      final response = await http.post(Uri.parse(uri), headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      }, body: {
-        'patientId': patientId,
-        'doctorId': doctorId,
-        'time': time,
-        'date': date,
-        'note': note
+      final response =
+          await ApiService().post('patients/appointments/confirmation', {
+        'doctor_id': doctorId,
+        'appointment_time': time,
+        'appointment_date': date,
+        'notes': note
       });
       if (response.statusCode >= 200 && response.statusCode < 300) {
+        return;
       } else {
         throw Exception('API error ${response.statusCode}');
       }

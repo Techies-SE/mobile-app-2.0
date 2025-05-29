@@ -4,8 +4,8 @@ class RequestAppointment {
   final AppointmentRepo repo;
   RequestAppointment(this.repo);
 
-  Future<void> call(int doctorId, int patientId, String date, String time,
-      String note) async {
-    await repo.requestAppointment(patientId, doctorId, time, date, note);
+  Future<void> call(int doctorId, String date, String time,
+      String? note) async {
+    await repo.requestAppointment( doctorId, time, date, note);
   }
 }

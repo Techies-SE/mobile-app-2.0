@@ -53,12 +53,13 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     try {
       await requestAppointment.call(
         event.doctorId,
-        event.patientId,
         event.date,
         event.time,
         event.note,
       );
+      print('Appointment requesting');
       emit(AppointmentRequestingSuccess());
+      print('AppointmentRequestingSuccess');
     } catch (e) {
       emit(AppointmentRequestingFail(error: e.toString()));
     }
