@@ -264,45 +264,54 @@ class Upcoming extends StatelessWidget {
               );
             }
 
-            return ListView.separated(
-              itemCount: upcomingAppointments.length,
-              separatorBuilder: (context, index) => SizedBox(height: 10),
-              itemBuilder: (context, index) {
-                final appointment = upcomingAppointments[index];
-
-                if (appointment.status.contains('pending')) {
-                  return PendinnAppointment(
-                    doctor: appointment.doctor,
-                    doctor_id: appointment.doctor_id,
-                    specialization: appointment.specialization,
-                    date: appointment.date,
-                    time: appointment.time,
-                    status: appointment.status,
-                  );
-                } else if (appointment.status == 'scheduled') {
-                  return ScheduledAppointment(
-                    doctor: appointment.doctor,
-                    doctor_id: appointment.doctor_id,
-                    specialization: appointment.specialization,
-                    date: appointment.date,
-                    time: appointment.time,
-                    status: appointment.status,
-                    appointmentId: appointment.appointmentId,
-                  );
-                } else if (appointment.status == 'rescheduled') {
-                  return RescheduleAppointment(
-                    doctor: appointment.doctor,
-                    doctor_id: appointment.doctor_id,
-                    specialization: appointment.specialization,
-                    date: appointment.date,
-                    time: appointment.time,
-                    status: appointment.status,
-                    appointmentId: appointment.appointmentId,
-                  );
-                } else {
-                  return SizedBox();
-                }
+            return RefreshIndicator(
+              color: HospitalColors.primaryDark,
+              backgroundColor: HospitalColors.primarySoft,
+              onRefresh: () async {
+                context
+                    .read<AppointmentBloc>()
+                    .add(FetchAppointmentByUserIdEvent());
               },
+              child: ListView.separated(
+                itemCount: upcomingAppointments.length,
+                separatorBuilder: (context, index) => SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final appointment = upcomingAppointments[index];
+
+                  if (appointment.status.contains('pending')) {
+                    return PendinnAppointment(
+                      doctor: appointment.doctor,
+                      doctor_id: appointment.doctor_id,
+                      specialization: appointment.specialization,
+                      date: appointment.date,
+                      time: appointment.time,
+                      status: appointment.status,
+                    );
+                  } else if (appointment.status == 'scheduled') {
+                    return ScheduledAppointment(
+                      doctor: appointment.doctor,
+                      doctor_id: appointment.doctor_id,
+                      specialization: appointment.specialization,
+                      date: appointment.date,
+                      time: appointment.time,
+                      status: appointment.status,
+                      appointmentId: appointment.appointmentId,
+                    );
+                  } else if (appointment.status == 'rescheduled') {
+                    return RescheduleAppointment(
+                      doctor: appointment.doctor,
+                      doctor_id: appointment.doctor_id,
+                      specialization: appointment.specialization,
+                      date: appointment.date,
+                      time: appointment.time,
+                      status: appointment.status,
+                      appointmentId: appointment.appointmentId,
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                },
+              ),
             );
           } else {
             return SizedBox();
