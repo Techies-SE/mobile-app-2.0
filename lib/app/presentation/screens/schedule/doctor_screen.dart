@@ -473,8 +473,11 @@ class _DoctorScreenState extends State<DoctorScreen> {
                                       ),
                                       SizedBox(height: 12),
                                       TextField(
+                                        onSubmitted: (value) {
+                                          FocusScope.of(context).unfocus();
+                                        },
                                         controller: _noteController,
-                                        maxLines: 4,
+                                        maxLines: 1,
                                         maxLength: 500,
                                         decoration: InputDecoration(
                                           hintText:

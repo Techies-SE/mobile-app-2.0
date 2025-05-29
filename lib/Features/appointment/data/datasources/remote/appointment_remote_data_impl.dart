@@ -22,12 +22,27 @@ class AppointmentRemoteDataImpl implements AppointmentsRemoteData {
   }
 
   @override
-  Future<void> confirmReschsduledAppointment(int appointmentId) async {
+  Future<void> confirmRescheduledAppointment(int appointmentId) async {
     try {
       final response = await ApiService()
           .put('patients/appointments/$appointmentId/confirm', {});
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        return json.decode(response.body);
+        return;
+      } else {
+        throw Exception('Fail api ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Fail api $e');
+    }
+  }
+
+  @override
+  Future<void> cancelRescheduledAppointment(int appointmentId) async{
+    try {
+      final response = await ApiService()
+          .put('patients/appointments/$appointmentId/cancel', {});
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return;
       } else {
         throw Exception('Fail api ${response.statusCode}');
       }

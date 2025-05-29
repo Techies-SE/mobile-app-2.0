@@ -22,4 +22,8 @@ abstract class AppointmentRepo {
   Future<void> confirmRescheduledAppoinment(
     int appointmentId,
   );
+
+   Future<void> cancelRescheduledAppoinment(
+    int appointmentId,
+  );
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_app_2/Features/appointment/domain/usecases/cancel_reschedule.dart';
 import 'package:mobile_app_2/Features/appointment/domain/usecases/confirm_rescheduled_appointment.dart';
 import 'package:mobile_app_2/Features/appointment/domain/usecases/fetch_appointment.dart';
 import 'package:mobile_app_2/Features/appointment/domain/usecases/request_appointment.dart';
@@ -11,17 +12,20 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
   final RequestAppointment requestAppointment;
   final RescheduleAppointment rescheduleAppointment;
   final ConfirmRescheduledAppointment confirmRescheduledAppointment;
+  final CancelReschedule cancelRescheduleAppointment;
 
   AppointmentBloc({
     required this.fetchAppointment,
     required this.requestAppointment,
     required this.rescheduleAppointment,
     required this.confirmRescheduledAppointment,
+    required this.cancelRescheduleAppointment,
   }) : super(AppointmentInitial()) {
     on<FetchAppointmentByUserIdEvent>(_fetchAppointment);
     on<RequestAppointmentEvent>(_requestAppointment);
     on<RescheduledAppointmentEvent>(_rescheduleAppointment);
     on<ConfirmRescheduledAppointmentEvent>(_confirmRescheduledAppoitment);
+    on<CancelRescheduledAppoinmentEvent>(_cancelRescheduledAppointemnt);
   }
 
   Future<void> _fetchAppointment(FetchAppointmentByUserIdEvent event,
@@ -47,6 +51,18 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     }
   }
 
+  Future<void> _cancelRescheduledAppointemnt(
+      CancelRescheduledAppoinmentEvent event,
+      Emitter<AppointmentState> emit) async {
+    emit(CancellingRescheduledAppointment());
+    try {
+      await cancelRescheduleAppointment(event.appointmentId);
+      emit(CancelRescheduledAppointmentSuccess());
+    } catch (e) {
+      emit(CancelRescheduledAppointmentFail(error: e.toString()));
+    }
+  }
+
   Future<void> _requestAppointment(
       RequestAppointmentEvent event, Emitter<AppointmentState> emit) async {
     emit(AppointmentRequesting());
@@ -57,9 +73,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
         event.time,
         event.note,
       );
-      print('Appointment requesting');
       emit(AppointmentRequestingSuccess());
-      print('AppointmentRequestingSuccess');
     } catch (e) {
       emit(AppointmentRequestingFail(error: e.toString()));
     }

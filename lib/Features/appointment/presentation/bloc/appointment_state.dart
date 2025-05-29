@@ -30,6 +30,17 @@ class ConfirmingRescheduledAppointmentFailed extends AppointmentState {
   ConfirmingRescheduledAppointmentFailed({required this.error});
 }
 
+//for cancel rescheduled apppintment
+class CancellingRescheduledAppointment extends AppointmentState {}
+
+class CancelRescheduledAppointmentSuccess extends AppointmentState {}
+
+class CancelRescheduledAppointmentFail extends AppointmentState {
+  final String error;
+
+  CancelRescheduledAppointmentFail({required this.error});
+}
+
 //for appointment request
 class AppointmentRequesting extends AppointmentState {}
 

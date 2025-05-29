@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:mobile_app_2/Features/appointment/data/datasources/remote/appointment_remote_data_impl.dart';
 import 'package:mobile_app_2/Features/appointment/data/repositories/appointment_repo_impl.dart';
+import 'package:mobile_app_2/Features/appointment/domain/usecases/cancel_reschedule.dart';
 import 'package:mobile_app_2/Features/appointment/domain/usecases/confirm_rescheduled_appointment.dart';
 import 'package:mobile_app_2/Features/appointment/domain/usecases/fetch_appointment.dart';
 import 'package:mobile_app_2/Features/appointment/domain/usecases/request_appointment.dart';
@@ -65,6 +66,8 @@ void setupLocator() {
   getIt.registerLazySingleton(
       () => ConfirmRescheduledAppointment(getIt<AppointmentRepoImpl>()));
   getIt.registerLazySingleton(
+      () => CancelReschedule(getIt<AppointmentRepoImpl>()));
+  getIt.registerLazySingleton(
       () => RequestAppointment(getIt<AppointmentRepoImpl>()));
   getIt.registerLazySingleton(
       () => RescheduleAppointment(getIt<AppointmentRepoImpl>()));
@@ -73,6 +76,7 @@ void setupLocator() {
         requestAppointment: getIt<RequestAppointment>(),
         rescheduleAppointment: getIt<RescheduleAppointment>(),
         confirmRescheduledAppointment: getIt<ConfirmRescheduledAppointment>(),
+        cancelRescheduleAppointment: getIt<CancelReschedule>(),
       ));
 
   //schedule ( dapartment & doctor)

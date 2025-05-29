@@ -2,8 +2,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_bloc.dart';
+import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_event.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 
 class ScheduledAppointment extends StatelessWidget {
@@ -13,6 +16,7 @@ class ScheduledAppointment extends StatelessWidget {
   final String date;
   final String time;
   final String status;
+  final int appointmentId;
   const ScheduledAppointment({
     super.key,
     required this.doctor,
@@ -21,6 +25,7 @@ class ScheduledAppointment extends StatelessWidget {
     required this.date,
     required this.time,
     required this.status,
+    required this.appointmentId,
   });
 
   @override
@@ -143,15 +148,19 @@ class ScheduledAppointment extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<AppointmentBloc>().add(
+                          CancelRescheduledAppoinmentEvent(
+                              appointmentId: appointmentId),
+                        );
+                  },
                   style: TextButton.styleFrom(
-                    fixedSize: Size(132, 28),
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      side: BorderSide(color: mainBgColor),
-                    )
-                  ),
+                      fixedSize: Size(132, 28),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        side: BorderSide(color: mainBgColor),
+                      )),
                   child: Text(
                     'Cancel',
                     style: GoogleFonts.inter(
@@ -163,17 +172,19 @@ class ScheduledAppointment extends StatelessWidget {
                 TextButton(
                   onPressed: () {},
                   style: TextButton.styleFrom(
-                    fixedSize: Size(132, 28),
-                    backgroundColor: mainBgColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      side: BorderSide(color: mainBgColor),
-                    )
-                  ),
-                  child: Text('Reschedule', style: GoogleFonts.inter(
+                      fixedSize: Size(132, 28),
+                      backgroundColor: mainBgColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        side: BorderSide(color: mainBgColor),
+                      )),
+                  child: Text(
+                    'Reschedule',
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       color: Colors.white,
-                    ),),
+                    ),
+                  ),
                 ),
               ],
             )

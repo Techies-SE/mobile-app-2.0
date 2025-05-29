@@ -1,9 +1,13 @@
+// Fixed RescheduleAppointment widget with correct BlocListener states
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_bloc.dart';
+import 'package:mobile_app_2/Features/appointment/presentation/bloc/appointment_event.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 
 class RescheduleAppointment extends StatelessWidget {
@@ -13,6 +17,8 @@ class RescheduleAppointment extends StatelessWidget {
   final String date;
   final String time;
   final String status;
+  final int appointmentId;
+
   const RescheduleAppointment({
     super.key,
     required this.doctor,
@@ -21,6 +27,7 @@ class RescheduleAppointment extends StatelessWidget {
     required this.date,
     required this.time,
     required this.status,
+    required this.appointmentId,
   });
 
   @override
@@ -29,6 +36,7 @@ class RescheduleAppointment extends StatelessWidget {
     final appointmentTime = DateFormat('h:mm a').format(
       DateFormat('HH:mm:ss').parse(time.split('.')[0]),
     );
+
     return Container(
       height: 160,
       decoration: BoxDecoration(
@@ -46,16 +54,6 @@ class RescheduleAppointment extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // ClipOval(
-                //   child: Image.asset(
-                //     'assets/images/doctorPic.png',
-                //     width: 32,
-                //     height: 32,
-                //   ),
-                // ),
-                // SizedBox(
-                //   width: 10,
-                // ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -86,7 +84,7 @@ class RescheduleAppointment extends StatelessWidget {
                   child: Text(
                     status,
                     style: TextStyle(
-                      color:  Color(0xff938506),
+                      color: Color(0xff938506),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -103,9 +101,7 @@ class RescheduleAppointment extends StatelessWidget {
                       size: 20,
                       color: textColorSecondary,
                     ),
-                    SizedBox(
-                      width: 5,
-                    ),
+                    SizedBox(width: 5),
                     Text(
                       appointmentDate,
                       style: GoogleFonts.inter(
@@ -115,9 +111,7 @@ class RescheduleAppointment extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: 10,
-                ),
+                SizedBox(width: 10),
                 Row(
                   children: [
                     Icon(
@@ -125,9 +119,7 @@ class RescheduleAppointment extends StatelessWidget {
                       size: 20,
                       color: textColorSecondary,
                     ),
-                    SizedBox(
-                      width: 5,
-                    ),
+                    SizedBox(width: 5),
                     Text(
                       appointmentTime,
                       style: GoogleFonts.inter(
@@ -143,15 +135,19 @@ class RescheduleAppointment extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                     context.read<AppointmentBloc>().add(
+                          CancelRescheduledAppoinmentEvent(
+                              appointmentId: appointmentId),
+                        );
+                  },
                   style: TextButton.styleFrom(
-                    fixedSize: Size(132, 28),
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      side: BorderSide(color: mainBgColor),
-                    )
-                  ),
+                      fixedSize: Size(132, 28),
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        side: BorderSide(color: mainBgColor),
+                      )),
                   child: Text(
                     'Cancel',
                     style: GoogleFonts.inter(
@@ -161,19 +157,26 @@ class RescheduleAppointment extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<AppointmentBloc>().add(
+                          ConfirmRescheduledAppointmentEvent(
+                              appointmentId: appointmentId),
+                        );
+                  },
                   style: TextButton.styleFrom(
-                    fixedSize: Size(132, 28),
-                    backgroundColor: mainBgColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      side: BorderSide(color: mainBgColor),
-                    )
-                  ),
-                  child: Text('Confirm', style: GoogleFonts.inter(
+                      fixedSize: Size(132, 28),
+                      backgroundColor: mainBgColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        side: BorderSide(color: mainBgColor),
+                      )),
+                  child: Text(
+                    'Confirm',
+                    style: GoogleFonts.inter(
                       fontSize: 13,
                       color: Colors.white,
-                    ),),
+                    ),
+                  ),
                 ),
               ],
             )

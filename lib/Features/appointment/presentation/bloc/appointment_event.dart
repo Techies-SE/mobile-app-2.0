@@ -7,6 +7,12 @@ class ConfirmRescheduledAppointmentEvent extends AppointmentEvent {
   ConfirmRescheduledAppointmentEvent({required this.appointmentId});
 }
 
+class CancelRescheduledAppoinmentEvent extends AppointmentEvent {
+  final int appointmentId;
+  CancelRescheduledAppoinmentEvent({required this.appointmentId});
+}
+
+
 class RequestAppointmentEvent extends AppointmentEvent {
   final int doctorId;
   final String time;

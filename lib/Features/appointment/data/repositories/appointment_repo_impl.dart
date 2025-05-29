@@ -19,7 +19,12 @@ class AppointmentRepoImpl implements AppointmentRepo {
 
   @override
   Future<void> confirmRescheduledAppoinment(int appointmentId) async {
-    await appointmentRemoteData.confirmReschsduledAppointment(appointmentId);
+    await appointmentRemoteData.confirmRescheduledAppointment(appointmentId);
+  }
+
+  @override
+  Future<void> cancelRescheduledAppoinment(int appointmentId) async {
+    await appointmentRemoteData.cancelRescheduledAppointment(appointmentId);
   }
 
   @override
