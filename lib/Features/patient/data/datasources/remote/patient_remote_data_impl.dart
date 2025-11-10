@@ -9,6 +9,7 @@ class PatientRemoteDataImpl implements PatientRemoteData {
       final response = await ApiService().get('patients/profile');
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final data = json.decode(response.body);
+        print(data);
         final user = data['user'];
         return user;
       } else {

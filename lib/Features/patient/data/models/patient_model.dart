@@ -29,9 +29,9 @@ class PatientModel extends PatitentEntity {
       gender: json['lab_data'][0]['gender'] ?? '',
       blood_type: json['lab_data'][0]['blood_type'] ?? 'none',
       age: json['lab_data'][0]['age'] ?? 0,
-      weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
-      height: (json['height'] as num?)?.toDouble() ?? 0.0,
-      bmi: (json['bmi'] as num?)?.toDouble() ?? 0.0,
+      weight: double.parse('${json['lab_data'][0]['weight']}') ,
+      height: double.parse('${json['lab_data'][0]['height']}'),
+      bmi: double.parse('${json['lab_data'][0]['bmi']}'),
     );
   }
 
