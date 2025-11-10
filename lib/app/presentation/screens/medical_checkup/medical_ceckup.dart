@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_app_2/app/presentation/screens/medical_checkup/medical_checkup_detail.dart';
+import 'package:mobile_app_2/app/presentation/screens/medical_checkup/new_medical_checkup_detail.dart';
 import 'package:mobile_app_2/app/utilities/api_service.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 
@@ -29,7 +30,7 @@ class _MedicalCheckupState extends State<MedicalCheckup> {
       setState(() {
         isLoading = true;
       });
-      final response = await ApiService().get('patients/lab-tests');
+      final response = await ApiService().get('patients/labtests');
       //print('it is above the if');
       if (response.statusCode >= 200 && response.statusCode < 300) {
         // print('it is in the if');
@@ -37,7 +38,7 @@ class _MedicalCheckupState extends State<MedicalCheckup> {
         setState(() {
           labTests = data['data'];
           //generalService.setRecommendation(labTests);
-          //print('Lab Test: $labTests');
+          print('Lab Test: $labTests');
         });
       } else {
         print(response.statusCode);
@@ -54,20 +55,19 @@ class _MedicalCheckupState extends State<MedicalCheckup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: Color(0xfff7fcff),
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          'Medical Checkup',
+          'Lab Test Results',
           style: appbarTestStyle,
         ),
-      ),
+      ), 
       body: isLoading == true
           ? Center(
               child: CircularProgressIndicator(),
             )
-
           : labTests.isEmpty? Center(
               child: Text('No Lab Tests yet'),
             ): Padding(
@@ -78,35 +78,21 @@ class _MedicalCheckupState extends State<MedicalCheckup> {
               ),
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      '2025',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: textColorSecondary,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
                   Expanded(
                     child: ListView.separated(
                       itemCount: labTests.length,
                       separatorBuilder: (context, index) => SizedBox(
-                        height: 10,
+                        height: 24,
                       ),
                       itemBuilder: (context, index) {
                         final labTestDetail = labTests[index];
                         DateTime dateTime =
                             DateTime.parse(labTestDetail['lab_test_date']);
                         final DateFormat formatter = DateFormat('MMMM d, yyyy');
+                        List<dynamic> labtests = labTestDetail['lab_tests'];
                         String labTestDate = formatter.format(dateTime);
                         return ListTile(
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -115,31 +101,55 @@ class _MedicalCheckupState extends State<MedicalCheckup> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                labTestDetail['test_name'],
-                                style: GoogleFonts.inter(
-                                  fontSize: 13,
+                                labTestDate,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              Text(
-                                labTestDate,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w400,
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Card(
+                                color: const Color(0xffd9f8eb),
+                                child: Padding(padding: EdgeInsetsGeometry.symmetric(horizontal:  8, vertical: 4),
+                                child: Text('${labtests.length} tests', style: GoogleFonts.inter(
+                                  color: Colors.black87,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),),
                                 ),
                               ),
+                               SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                'Result analyzed by ${labtests[0]['doctor_name']}',
+                                style: GoogleFonts.inter(
+                                  color: Colors.black87,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              
                             ],
                           ),
                           trailing: Icon(Icons.chevron_right_outlined),
                           onTap: () {
+                            DateTime dateTime =
+                            DateTime.parse(labTestDetail['lab_test_date']);
+                            DateFormat formatter = DateFormat('yyyy-MM-dd');
+                            String date = formatter.format(dateTime);
+                            // print(date);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MedicalCheckupDetail(
-                                  title: labTestDetail['test_name'],
-                                  lab_test_id: labTestDetail['lab_test_id'],
-                                  time: labTestDate,
-                                ),
+                                // builder: (context) => MedicalCheckupDetail(
+                                //   title: labTestDetail['test_name'],
+                                //   lab_test_id: labTestDetail['lab_test_id'],
+                                //   time: labTestDate,
+                                // ),
+                                builder: (context) => NewMedicalCheckupDetail(date: date,),
                               ),
                             );
                           },

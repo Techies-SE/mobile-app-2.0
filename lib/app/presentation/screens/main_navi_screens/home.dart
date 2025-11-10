@@ -146,52 +146,63 @@ class _HomeState extends State<Home> {
                       .where((appointment) => appointment.status == 'scheduled')
                       .toList()
                       .length;
-                  return Column(
-                    children: [
-                      SizedBox(
-                        height: 150,
-                        child: PageView.builder(
-                          controller: _pageController,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: counts,
-                          itemBuilder: (context, index) {
-                            final appointment = state.appointmentEntityList
-                                .where((appointment) =>
-                                    appointment.status == 'scheduled')
-                                .toList()[index];
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 20.0, right: 20),
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.91,
-                                child: AppointmentCard(
-                                  doctor: appointment.doctor,
-                                  specialization: appointment.specialization,
-                                  date: appointment.date,
-                                  time: appointment.time,
-                                  status: appointment.status,
-                                  doctor_id: appointment.doctor_id,
-                                ),
+                  return counts == 0
+                      ? SizedBox(
+                          height: 150,
+                          child: Center(
+                            child: Text('No Scheduled Appointments!'),
+                          ),
+                        )
+                      : Column(
+                          children: [
+                            SizedBox(
+                              height: 150,
+                              child: PageView.builder(
+                                controller: _pageController,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: counts,
+                                itemBuilder: (context, index) {
+                                  final appointment = state
+                                      .appointmentEntityList
+                                      .where((appointment) =>
+                                          appointment.status == 'scheduled')
+                                      .toList()[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20.0, right: 20),
+                                    child: SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.91,
+                                      child: AppointmentCard(
+                                        doctor: appointment.doctor,
+                                        specialization:
+                                            appointment.specialization,
+                                        date: appointment.date,
+                                        time: appointment.time,
+                                        status: appointment.status,
+                                        doctor_id: appointment.doctor_id,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      SmoothPageIndicator(
-                        controller: _pageController,
-                        count: counts,
-                        effect: WormEffect(
-                          dotHeight: 11.31,
-                          dotWidth: 11.31,
-                          dotColor: Color(0x80C7BABA),
-                          activeDotColor: Color(0xFF50BEAF).withAlpha(130),
-                        ),
-                      ),
-                    ],
-                  );
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            SmoothPageIndicator(
+                              controller: _pageController,
+                              count: counts,
+                              effect: WormEffect(
+                                dotHeight: 11.31,
+                                dotWidth: 11.31,
+                                dotColor: Color(0x80C7BABA),
+                                activeDotColor:
+                                    Color(0xFF50BEAF).withAlpha(130),
+                              ),
+                            ),
+                          ],
+                        );
                 } else if (state is AppointmentFetchingFail) {
                   return Center(
                     child: Column(

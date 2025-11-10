@@ -21,6 +21,6 @@ const Color cancelButtonColor = Color(0xffE5E7EB);
 
 var appbarTestStyle = GoogleFonts.inter(
   fontWeight: FontWeight.bold,
-  fontSize: 19,
+  fontSize: 16,
   color: Color(0xff404040),
 );

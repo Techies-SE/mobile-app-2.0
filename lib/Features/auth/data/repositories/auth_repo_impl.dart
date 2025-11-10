@@ -21,6 +21,7 @@ class AuthRepoImpl implements AuthRepository {
     //to save token
     authLocalDataSource.saveToken(authEntity.token);
     authLocalDataSource.saveUserId(authEntity.userId);
+    authLocalDataSource.saveHnNumber(authEntity.hnNumber);
     return authEntity;
   }
 

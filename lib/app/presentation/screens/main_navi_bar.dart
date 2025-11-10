@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app_2/app/presentation/screens/main_navi_screens/appointment.dart';
 import 'package:mobile_app_2/app/presentation/screens/main_navi_screens/home.dart';
-import 'package:mobile_app_2/app/presentation/screens/main_navi_screens/profile.dart';
-import 'package:mobile_app_2/app/presentation/screens/main_navi_screens/recommendation.dart';
+import 'package:mobile_app_2/app/presentation/screens/medical_checkup/medical_ceckup.dart';
+import 'package:mobile_app_2/app/presentation/screens/profile/new_profile.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 
 // ignore: must_be_immutable
@@ -16,9 +16,9 @@ class MainNaviBar extends StatefulWidget {
 class _MainNaviBarState extends State<MainNaviBar> {
   List<Widget> screens = [
     Home(),
-    RecommendationsScreen(),
+    MedicalCheckup(),
     Appointment(),
-    Profile(),
+    NewProfile(),
   ];
 
   @override
@@ -41,7 +41,7 @@ class _MainNaviBarState extends State<MainNaviBar> {
               icon: Icon(Icons.home),
             ),
             BottomNavigationBarItem(
-              label: 'Recommendation',
+              label: 'Results',
               icon: Icon(Icons.filter_frames_sharp),
             ),
             BottomNavigationBarItem(

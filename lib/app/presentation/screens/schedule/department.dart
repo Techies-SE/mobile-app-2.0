@@ -206,7 +206,7 @@ class DoctorCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Dr. ${doctor.name}',
+                        doctor.name,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -429,7 +429,7 @@ class DoctorCard extends StatelessWidget {
               ),
               SizedBox(height: 24),
               Text(
-                'Dr. ${doctor.name}',
+                doctor.name,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

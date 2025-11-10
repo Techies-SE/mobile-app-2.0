@@ -754,7 +754,12 @@ class _DoctorScreenState extends State<DoctorScreen> {
               color: HospitalColors.primaryColor,
             ),
             SizedBox(width: 12),
-            Text('Confirm Appointment'),
+            Text(
+              'Confirm Appointment',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
           ],
         ),
         content: Column(
@@ -762,7 +767,7 @@ class _DoctorScreenState extends State<DoctorScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Doctor: Dr. ${doctor.name}',
+              doctor.name,
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 8),

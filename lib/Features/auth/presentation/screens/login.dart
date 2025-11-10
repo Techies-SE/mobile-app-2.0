@@ -37,18 +37,15 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthLoginSuccess) {
-              // ScaffoldMessenger.of(context).showSnackBar(
-              //   SnackBar(content: Text('Login Successful: ${state.token}')),
-              // );
               if (state.authEntity.firstTimeLogin == false) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => OtpScreen()));
+              } else {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => MainNaviBar()),
                   (route) => false,
                 );
-              } else {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => OtpScreen()));
               }
             } else if (state is AuthFail) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -57,36 +54,11 @@ class _LoginPageState extends State<LoginPage> {
             }
           },
           builder: (context, state) {
-            // return Column(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     TextField(
-            //       controller: phoneController,
-            //       decoration: const InputDecoration(labelText: 'Phone Number'),
-            //     ),
-            //     const SizedBox(height: 16),
-            //     TextField(
-            //       controller: passwordController,
-            //       decoration: const InputDecoration(labelText: 'Password'),
-            //       obscureText: true,
-            //     ),
-            //     const SizedBox(height: 24),
-            //     state is AuthLoading
-            //         ? const CircularProgressIndicator()
-            //         : ElevatedButton(
-            //             onPressed: () async {
-            //               final prefs = await SharedPreferences.getInstance();
-            //               await prefs.setBool('first_time', true);
-            //             },
-            //             child: const Text('Login'),
-            //           ),
-            //   ],
-            // );
             return Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/login_bg.png'),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                 ),
               ),
               child: Center(
@@ -137,12 +109,15 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       child: TextField(
                         controller: phoneController,
+                        style: GoogleFonts.poppins(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13),
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Phone Number',
                           hintStyle: GoogleFonts.poppins(
-                            fontSize: 13,
-                          ),
+                              fontSize: 13, color: Colors.grey),
                         ),
                       ),
                     ),
@@ -158,27 +133,31 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: TextField(
+                            obscureText: true,
                             controller: passwordController,
+                            style: GoogleFonts.poppins(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13),
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Password',
                               hintStyle: GoogleFonts.poppins(
-                                fontSize: 13,
-                              ),
+                                  fontSize: 13, color: Colors.grey),
                             ),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment(0.76, 0),
-                          child: GestureDetector(
-                            child: Text(
-                              'Forget password?',
-                              style: GoogleFonts.poppins(
-                                fontSize: 11,
-                              ),
-                            ),
-                          ),
-                        )
+                        // Align(
+                        //   alignment: Alignment(0.76, 0),
+                        //   child: GestureDetector(
+                        //     child: Text(
+                        //       'Forget password?',
+                        //       style: GoogleFonts.poppins(
+                        //         fontSize: 11,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // )
                       ],
                     ),
                     Spacer(),
@@ -204,6 +183,7 @@ class _LoginPageState extends State<LoginPage> {
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 color: Colors.white,
+                                fontWeight: FontWeight.bold
                               ),
                             ),
                     ),

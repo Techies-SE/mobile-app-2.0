@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_app_2/Features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:mobile_app_2/Features/auth/presentation/bloc/auth_event.dart';
 import 'package:mobile_app_2/Features/auth/presentation/bloc/auth_state.dart';
+import 'package:mobile_app_2/app/presentation/screens/main_navi_bar.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 
 class ChangePassword extends StatefulWidget {
@@ -44,6 +45,10 @@ class _ChangePasswordState extends State<ChangePassword> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Change Password success')),
             );
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => MainNaviBar()),
+                (route) => false);
           } else if (state is AuthFail) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error)),
@@ -99,6 +104,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextField(
+                      style: GoogleFonts.poppins(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13),
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top: 8),
                         suffixIcon: Icon(
@@ -136,6 +145,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                     ),
                     child: TextField(
                       controller: newPasswordController,
+                      style: GoogleFonts.poppins(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13),
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top: 8),
                         suffixIcon: Icon(
@@ -173,6 +186,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                     ),
                     child: TextField(
                       controller: confirmPasswordController,
+                      style: GoogleFonts.poppins(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13),
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(top: 8),
                         suffixIcon: Icon(
@@ -289,13 +306,15 @@ class _ChangePasswordState extends State<ChangePassword> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: State is AuthLoading ? CircularProgressIndicator(): Text(
-                      'Change Password',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child: State is AuthLoading
+                        ? CircularProgressIndicator()
+                        : Text(
+                            'Change Password',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                   SizedBox(
                     height: 10,

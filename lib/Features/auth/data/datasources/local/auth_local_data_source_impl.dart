@@ -9,6 +9,18 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
+  Future<void> saveHnNumber(String hnNumber) async{
+     final prefs = await SharedPreferences.getInstance();
+    prefs.setString('hnNumber', hnNumber);
+  }
+
+  @override
+  Future<String?> getHnNumber() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('hnNumber');
+  }
+
+  @override
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('auth_token');
