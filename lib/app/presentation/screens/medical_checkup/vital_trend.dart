@@ -3,10 +3,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_app_2/app/presentation/screens/medical_checkup/vital_histories.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 import 'package:intl/intl.dart';
 import '../../../../Features/auth/data/datasources/local/auth_local_data_source_impl.dart';
 import '../../../utilities/api_service.dart';
+import 'all_lab_histories.dart';
 
 class VitalTrend extends StatefulWidget {
   const VitalTrend({super.key});
@@ -94,7 +96,7 @@ class _VitalTrendState extends State<VitalTrend> {
   }
 
   Future<void> addNewVitalInfo(
-      double weight, double systolic, double diastolic) async {
+      double weight, int systolic, int diastolic) async {
     try {
       setState(() {
         isSending = true;
@@ -398,14 +400,29 @@ class _VitalTrendState extends State<VitalTrend> {
                       height: 50,
                       child: TextButton(
                         onPressed: () async {
+                          print(
+                            double.parse(
+                              weightController.text.trim(),
+                            ),
+                          );
+                          print(
+                            double.parse(
+                              systolicController.text.trim(),
+                            ),
+                          );
+                          print(
+                            double.parse(
+                              diastolicController.text.trim(),
+                            ),
+                          );
                           await addNewVitalInfo(
                             double.parse(
                               weightController.text.trim(),
                             ),
-                            double.parse(
+                            int.parse(
                               systolicController.text.trim(),
                             ),
-                            double.parse(
+                            int.parse(
                               diastolicController.text.trim(),
                             ),
                           );
@@ -645,6 +662,39 @@ class _VitalTrendState extends State<VitalTrend> {
                 ],
               ),
               const SizedBox(
+                height: 16,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'History',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VitalHistories(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'See All',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
                 height: 16,
               ),
               _buildHistoryList(),
