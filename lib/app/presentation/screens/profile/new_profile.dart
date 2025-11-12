@@ -343,43 +343,43 @@ class _NewProfileState extends State<NewProfile> {
                     height: 20,
                   ),
                   //Update button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        if (onEditMode) {
-                          await saveEditedProfile(
-                            state.patient.hn_number,
-                            state.patient,
-                          );
-                          context.read<PatientCubit>().getPatientInfo();
-                        }
-                        setState(() {
-                          onEditMode = !onEditMode;
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: mainBgColor,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 2,
-                      ),
-                      // icon: Icon(Icons.edit),
-                      label: Text(
-                        onEditMode ? 'Save Profile' : 'Update Profile',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   child: ElevatedButton.icon(
+                  //     onPressed: () async {
+                  //       if (onEditMode) {
+                  //         await saveEditedProfile(
+                  //           state.patient.hn_number,
+                  //           state.patient,
+                  //         );
+                  //         context.read<PatientCubit>().getPatientInfo();
+                  //       }
+                  //       setState(() {
+                  //         onEditMode = !onEditMode;
+                  //       });
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: mainBgColor,
+                  //       foregroundColor: Colors.white,
+                  //       padding: EdgeInsets.symmetric(vertical: 15),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(12),
+                  //       ),
+                  //       elevation: 2,
+                  //     ),
+                  //     // icon: Icon(Icons.edit),
+                  //     label: Text(
+                  //       onEditMode ? 'Save Profile' : 'Update Profile',
+                  //       style: TextStyle(
+                  //         fontSize: 16,
+                  //         fontWeight: FontWeight.bold,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -392,7 +392,8 @@ class _NewProfileState extends State<NewProfile> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
+                       backgroundColor: mainBgColor,
+                       foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

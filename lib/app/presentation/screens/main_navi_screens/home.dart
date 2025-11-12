@@ -3,7 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app_2/Features/auth/presentation/screens/login.dart';
-import 'package:mobile_app_2/app/presentation/screens/medical_checkup/medical_ceckup.dart';
+import 'package:mobile_app_2/app/presentation/screens/medical_checkup/medical_checkup.dart';
 import 'package:mobile_app_2/app/presentation/screens/schedule/all_departments.dart';
 import 'package:mobile_app_2/app/presentation/widgets/utilities/service_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app_2/app/presentation/screens/main_navi_screens/appointment.dart';
 import 'package:mobile_app_2/app/presentation/screens/main_navi_screens/home.dart';
-import 'package:mobile_app_2/app/presentation/screens/medical_checkup/medical_ceckup.dart';
+import 'package:mobile_app_2/app/presentation/screens/medical_checkup/medical_checkup.dart';
 import 'package:mobile_app_2/app/presentation/screens/profile/new_profile.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 

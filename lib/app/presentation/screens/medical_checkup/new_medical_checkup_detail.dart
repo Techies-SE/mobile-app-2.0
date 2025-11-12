@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_app_2/Features/auth/data/datasources/local/auth_local_data_source_impl.dart';
+import 'package:mobile_app_2/app/presentation/screens/medical_checkup/lab_item_trend.dart';
 import 'package:mobile_app_2/app/utilities/api_service.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 
@@ -55,7 +55,6 @@ class _NewMedicalCheckupDetailState extends State<NewMedicalCheckupDetail> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchLabTestDetail();
   }
@@ -204,7 +203,6 @@ class _NewMedicalCheckupDetailState extends State<NewMedicalCheckupDetail> {
                                           ],
                                         ),
                                       ))
-                                  .toList(),
                               // Text(
                               //   recommemdation,
                               //   style: GoogleFonts.inter(
@@ -252,10 +250,12 @@ class _NewMedicalCheckupDetailState extends State<NewMedicalCheckupDetail> {
                                     ),
                                     const SizedBox(height: 10),
                                     const Divider(height: 1),
-                                    ...labItems
-                                        .map((item) => _buildLabItemRow(
-                                            item as Map<String, dynamic>))
-                                        .toList(),
+                                    ...labItems.map(
+                                      (item) => _buildLabItemRow(
+                                        item as Map<String, dynamic>,
+                                        context,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -355,12 +355,13 @@ class _NewMedicalCheckupDetailState extends State<NewMedicalCheckupDetail> {
 //   );
 // }
 
-Widget _buildLabItemRow(Map<String, dynamic> item) {
+Widget _buildLabItemRow(Map<String, dynamic> item, BuildContext context) {
   final name = item['lab_item_name'] as String? ?? 'N/A';
   String value = item['lab_item_value']?.toString() ?? 'N/A';
   final status = item['lab_item_status'] as String? ?? '';
   final unit = item['unit'] as String? ?? '';
   final normalRange = item['normal_range'] as String? ?? 'Not provided';
+  final  int id = item['id'];
 
   // Handle Gender display
   if (name == 'Gender' && value == '0') {
@@ -425,17 +426,28 @@ Widget _buildLabItemRow(Map<String, dynamic> item) {
                 ),
               ],
             ),
-            SizedBox(
-              width: 100,
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  '$value $unit',
-                  textAlign: TextAlign.right,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black54,
+            GestureDetector(
+              onTap: () {
+                // print(item);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LabItemTrend(labTestName: name, id: id,),
+                  ),
+                );
+              },
+              child: SizedBox(
+                width: 100,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '$value $unit',
+                    textAlign: TextAlign.right,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
+                    ),
                   ),
                 ),
               ),

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:mobile_app_2/app/presentation/screens/medical_checkup/medical_checkup_detail.dart';
 import 'package:mobile_app_2/app/presentation/screens/medical_checkup/new_medical_checkup_detail.dart';
 import 'package:mobile_app_2/app/utilities/api_service.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
