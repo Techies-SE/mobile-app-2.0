@@ -24,11 +24,11 @@ class _LabItemTrendState extends State<LabItemTrend> {
   List<dynamic> trends = [];
   List<ItemHistory> itemHistories = [];
   bool isLoading = false;
+  bool isHistoryLoading = false;
 
   final List<String> _ranges = ['1W', '1M', '6M', '1Y'];
 
-  Future<void> fetchLabItemTrendAndHistory() async {
-    itemHistories.clear();
+  Future<void> fetchLabItemTrend() async {
     trends.clear();
     try {
       if (!mounted) return;
@@ -39,20 +39,12 @@ class _LabItemTrendState extends State<LabItemTrend> {
       final hnNumber = await AuthLocalDataSourceImpl().getHnNumber();
       final response = await ApiService()
           .get('patients/$hnNumber/lab-items/${widget.id}/trends?range=$range');
-      final response2 = await ApiService().get(
-          'patients/$hnNumber/lab-items/${widget.id}/history?page=1&limit=3');
 
-      if (response.statusCode == 200 && response2.statusCode == 200) {
+      if (response.statusCode == 200) {
         final trendBody = jsonDecode(response.body);
-        final historyBody = jsonDecode(response2.body);
 
-        if (trendBody['trend'] is List && historyBody['history'] is List) {
+        if (trendBody['trend'] is List) {
           trends.addAll(trendBody['trend']);
-          for (var v in historyBody['history']) {
-            itemHistories.add(
-              ItemHistory.fromJson(v),
-            );
-          }
         }
       } else {
         throw Exception('Error Fetching Data ${response.statusCode}');
@@ -68,13 +60,40 @@ class _LabItemTrendState extends State<LabItemTrend> {
     }
   }
 
+  Future<void> fetchLabItemHistory() async {
+    setState(() => isHistoryLoading = true);
+    try {
+      final hnNumber = await AuthLocalDataSourceImpl().getHnNumber();
+      final response = await ApiService().get(
+          'patients/$hnNumber/lab-items/${widget.id}/history?page=1&limit=3');
+      if (response.statusCode == 200) {
+        final historyBody = jsonDecode(response.body);
+        if (historyBody['history'] is List) {
+          for (var v in historyBody['history']) {
+            itemHistories.add(
+              ItemHistory.fromJson(v),
+            );
+          }
+        }
+      } else {
+        throw Exception('Error fetching data: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+    } finally {
+      if (mounted) {
+        setState(() => isHistoryLoading = false);
+      }
+    }
+  }
+
   void _onRangeSelected(int index) {
     if (_selectedRangeIndex != index) {
       setState(() {
         _selectedRangeIndex = index;
         range = _ranges[index];
       });
-      fetchLabItemTrendAndHistory();
+      fetchLabItemTrend();
     }
   }
 
@@ -84,7 +103,8 @@ class _LabItemTrendState extends State<LabItemTrend> {
     // Setting initial range to 1Y (index 3) to match common default
     _selectedRangeIndex = _ranges.indexOf('1Y');
     range = '1Y';
-    fetchLabItemTrendAndHistory();
+    fetchLabItemTrend();
+    fetchLabItemHistory();
   }
 
   @override
@@ -363,7 +383,7 @@ class _LabItemTrendState extends State<LabItemTrend> {
     final monthFormatter = DateFormat('MMM');
     final dateFormatter = DateFormat('dd');
     final hourFormatter = DateFormat('hh:mm');
-    return itemHistories.isEmpty && isLoading
+    return itemHistories.isEmpty && isHistoryLoading
         ? Center(
             child: CircularProgressIndicator(),
           )

@@ -173,45 +173,15 @@ class _NewMedicalCheckupDetailState extends State<NewMedicalCheckupDetail> {
                               SizedBox(
                                 height: 8,
                               ),
-                              ...recommemdation
-                                  .split('.')
-                                  .where((line) => line.trim().isNotEmpty)
-                                  .map((line) => Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 6.0),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '• ',
-                                              style: GoogleFonts.inter(
-                                                color: Colors.black54,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                line,
-                                                style: GoogleFonts.inter(
-                                                  color: Colors.black54,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ))
-                              // Text(
-                              //   recommemdation,
-                              //   style: GoogleFonts.inter(
-                              //     color: Colors.black54,
-                              //     fontSize: 14,
-                              //     fontWeight: FontWeight.w500,
-                              //   ),
-                              // ),
+                              Text(
+                                recommemdation,
+                                style: GoogleFonts.inter(
+                                  color: Colors.black54,
+                                  fontSize: 14,
+                                  height: 2,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ],
                           ),
                         ),
