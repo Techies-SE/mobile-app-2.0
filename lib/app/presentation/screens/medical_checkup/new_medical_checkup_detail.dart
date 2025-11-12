@@ -76,6 +76,7 @@ class _NewMedicalCheckupDetailState extends State<NewMedicalCheckupDetail> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.white,
         title: Text(
           'Lab Test Details',

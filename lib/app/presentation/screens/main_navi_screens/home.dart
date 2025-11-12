@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app_2/Features/auth/presentation/screens/login.dart';
 import 'package:mobile_app_2/app/presentation/screens/medical_checkup/medical_checkup.dart';
+import 'package:mobile_app_2/app/presentation/screens/medical_checkup/vital_trend.dart';
 import 'package:mobile_app_2/app/presentation/screens/schedule/all_departments.dart';
 import 'package:mobile_app_2/app/presentation/widgets/utilities/service_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -129,7 +130,8 @@ class _HomeState extends State<Home> {
               builder: (context, state) {
                 if (state is AppointmentFetching) {
                   return Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    padding: const EdgeInsets.only(
+                        left: 20, right: 22, top: 20, bottom: 20),
                     child: Container(
                       height: 150,
                       decoration: BoxDecoration(
@@ -156,7 +158,7 @@ class _HomeState extends State<Home> {
                       : Column(
                           children: [
                             SizedBox(
-                              height: 150,
+                              height: 200,
                               child: PageView.builder(
                                 controller: _pageController,
                                 scrollDirection: Axis.horizontal,
@@ -169,7 +171,10 @@ class _HomeState extends State<Home> {
                                       .toList()[index];
                                   return Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 20.0, right: 20),
+                                        left: 20,
+                                        right: 22,
+                                        top: 20,
+                                        bottom: 20),
                                     child: SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           0.91,
@@ -188,7 +193,7 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                             SizedBox(
-                              height: 15,
+                              height: 4,
                             ),
                             SmoothPageIndicator(
                               controller: _pageController,
@@ -227,7 +232,6 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.only(
                 right: 20,
                 left: 20,
-                top: 10.0,
               ),
               child: Column(
                 children: [
@@ -374,9 +378,9 @@ class _HomeState extends State<Home> {
                               }
                             },
                             child: Text(
-                              'Call Now',
+                              'Call',
                               style: GoogleFonts.inter(
-                                fontSize: 10,
+                                fontSize: 12,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -455,14 +459,94 @@ class _HomeState extends State<Home> {
                               );
                             },
                             child: Text(
-                              'View Now',
+                              'View',
                               style: GoogleFonts.inter(
-                                fontSize: 10,
+                                fontSize: 12,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                           )),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Card(
+                    color: Color.fromARGB(255, 145, 183, 233),
+                    elevation: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Color.fromARGB(255, 78, 118, 168),
+                            child: Icon(
+                              Icons.health_and_safety_outlined,
+                              size: 24,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Vital Info',
+                                style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 200,
+                                child: Text(
+                                  'Add Vital Info and save the history',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  backgroundColor:
+                                      Color.fromARGB(255, 78, 118, 168),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  )),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => VitalTrend(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Add',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),

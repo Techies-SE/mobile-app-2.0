@@ -256,7 +256,7 @@ class _LabItemTrendState extends State<LabItemTrend> {
       child: LineChart(
         LineChartData(
           minX: 0,
-          maxX: spots.length > 0 ? spots.length.toDouble() - 1 : 1,
+          maxX: spots.isNotEmpty ? spots.length.toDouble() - 1 : 1,
           minY: minY,
           maxY: maxY,
           gridData: FlGridData(
