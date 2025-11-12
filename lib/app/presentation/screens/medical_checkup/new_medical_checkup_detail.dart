@@ -361,7 +361,7 @@ Widget _buildLabItemRow(Map<String, dynamic> item, BuildContext context) {
   final status = item['lab_item_status'] as String? ?? '';
   final unit = item['unit'] as String? ?? '';
   final normalRange = item['normal_range'] as String? ?? 'Not provided';
-  final  int id = item['id'];
+  final int id = item['id'];
 
   // Handle Gender display
   if (name == 'Gender' && value == '0') {
@@ -401,42 +401,45 @@ Widget _buildLabItemRow(Map<String, dynamic> item, BuildContext context) {
     padding: const EdgeInsets.symmetric(vertical: 8.0),
     child: Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: Colors.black87,
-                  ),
+        GestureDetector(
+          onTap: () {
+            // print(item);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LabItemTrend(
+                  labTestName: name,
+                  id: id,
                 ),
-                SizedBox(
-                  width: 100,
-                  child: Text(
-                    'Range: $normalRange',
+              ),
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
                     style: GoogleFonts.inter(
-                      fontSize: 10,
-                      color: Colors.grey,
+                      fontSize: 12,
+                      color: Colors.black87,
                     ),
                   ),
-                ),
-              ],
-            ),
-            GestureDetector(
-              onTap: () {
-                // print(item);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LabItemTrend(labTestName: name, id: id,),
+                  SizedBox(
+                    width: 100,
+                    child: Text(
+                      'Range: $normalRange',
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        color: Colors.grey,
+                      ),
+                    ),
                   ),
-                );
-              },
-              child: SizedBox(
+                ],
+              ),
+              SizedBox(
                 width: 100,
                 child: Align(
                   alignment: Alignment.centerRight,
@@ -451,19 +454,19 @@ Widget _buildLabItemRow(Map<String, dynamic> item, BuildContext context) {
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-              width: 60,
-              child: Text(
-                status,
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: statusColor,
-                  fontWeight: FontWeight.w600,
+              SizedBox(
+                width: 60,
+                child: Text(
+                  status,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: statusColor,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 10),
         const Divider(height: 1),

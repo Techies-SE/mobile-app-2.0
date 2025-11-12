@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_app_2/Features/auth/data/datasources/local/auth_local_data_source_impl.dart';
+import 'package:mobile_app_2/app/presentation/screens/medical_checkup/all_lab_histories.dart';
 import 'package:mobile_app_2/app/utilities/api_service.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
 
@@ -16,31 +18,20 @@ class LabItemTrend extends StatefulWidget {
   State<LabItemTrend> createState() => _LabItemTrendState();
 }
 
-
 class _LabItemTrendState extends State<LabItemTrend> {
-  int _selectedRangeIndex = 3; 
+  int _selectedRangeIndex = 3;
   String range = '1Y';
-  List<dynamic> trends = []; // Stores the trend data from the API
+  List<dynamic> trends = [];
+  List<ItemHistory> itemHistories = [];
   bool isLoading = false;
 
   final List<String> _ranges = ['1W', '1M', '6M', '1Y'];
 
-  // Static/Mock History List (as requested)
-  final List<VitalsHistory> _vitalsHistory = [
-    VitalsHistory(
-        date: 'NOV 22', time: '09:41 AM', weight: '60 kg', bp: '120/80 mmHg'),
-    VitalsHistory(
-        date: 'NOV 21', time: '08:30 AM', weight: '59.5 kg', bp: '118/78 mmHg'),
-    VitalsHistory(
-        date: 'NOV 20', time: '10:00 AM', weight: '59.8 kg', bp: '121/81 mmHg'),
-  ];
-
-
-  Future<void> fetchLabItemTrend() async {
-
+  Future<void> fetchLabItemTrendAndHistory() async {
+    itemHistories.clear();
     trends.clear();
     try {
-      if (!mounted) return; 
+      if (!mounted) return;
       setState(() {
         isLoading = true;
       });
@@ -48,21 +39,26 @@ class _LabItemTrendState extends State<LabItemTrend> {
       final hnNumber = await AuthLocalDataSourceImpl().getHnNumber();
       final response = await ApiService()
           .get('patients/$hnNumber/lab-items/${widget.id}/trends?range=$range');
+      final response2 = await ApiService().get(
+          'patients/$hnNumber/lab-items/${widget.id}/history?page=1&limit=3');
 
-      if (response.statusCode == 200) {
-        final body = jsonDecode(response.body);
-       
-        if (body['trend'] is List) {
-          
-          trends.addAll(body['trend']);
+      if (response.statusCode == 200 && response2.statusCode == 200) {
+        final trendBody = jsonDecode(response.body);
+        final historyBody = jsonDecode(response2.body);
+
+        if (trendBody['trend'] is List && historyBody['history'] is List) {
+          trends.addAll(trendBody['trend']);
+          for (var v in historyBody['history']) {
+            itemHistories.add(
+              ItemHistory.fromJson(v),
+            );
+          }
         }
       } else {
-      
         throw Exception('Error Fetching Data ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Error Fetching Data $e');
-      
     } finally {
       if (mounted) {
         setState(() {
@@ -72,14 +68,13 @@ class _LabItemTrendState extends State<LabItemTrend> {
     }
   }
 
-
   void _onRangeSelected(int index) {
     if (_selectedRangeIndex != index) {
       setState(() {
         _selectedRangeIndex = index;
         range = _ranges[index];
       });
-      fetchLabItemTrend(); 
+      fetchLabItemTrendAndHistory();
     }
   }
 
@@ -89,7 +84,7 @@ class _LabItemTrendState extends State<LabItemTrend> {
     // Setting initial range to 1Y (index 3) to match common default
     _selectedRangeIndex = _ranges.indexOf('1Y');
     range = '1Y';
-    fetchLabItemTrend();
+    fetchLabItemTrendAndHistory();
   }
 
   @override
@@ -98,7 +93,7 @@ class _LabItemTrendState extends State<LabItemTrend> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        // Assuming appbarTestStyle is defined in your constants
+        centerTitle: true,
         title: Text(
           'Historical Trend',
           // ignore: undefined_identifier
@@ -143,7 +138,15 @@ class _LabItemTrendState extends State<LabItemTrend> {
                 ),
                 TextButton(
                   onPressed: () {
-                    // Handle See All tap
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AllLabHistories(
+                          id: widget.id,
+                          title: widget.labTestName,
+                        ),
+                      ),
+                    );
                   },
                   child: const Text(
                     'See All',
@@ -357,79 +360,144 @@ class _LabItemTrendState extends State<LabItemTrend> {
   }
 
   Widget _buildHistoryList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: _vitalsHistory.length,
-      itemBuilder: (context, index) {
-        final history = _vitalsHistory[index];
-        return Card(
-          color: const Color.fromARGB(255, 242, 240, 240),
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          elevation: 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      history.date.split(' ')[0],
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+    final monthFormatter = DateFormat('MMM');
+    final dateFormatter = DateFormat('dd');
+    final hourFormatter = DateFormat('hh:mm');
+    return itemHistories.isEmpty && isLoading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : itemHistories.isEmpty
+            ? Container(
+                height: 200,
+                alignment: Alignment.center,
+                child: const Text('No History data available for this range.'),
+              )
+            : ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: itemHistories.length,
+                itemBuilder: (context, index) {
+                  final dateString = itemHistories[index].date;
+                  DateTime date = DateTime.parse(dateString!);
+                  final month = monthFormatter.format(date);
+                  final day = dateFormatter.format(date);
+                  final hour = hourFormatter.format(date);
+                  final value = itemHistories[index].value;
+                  final unit = itemHistories[index].unit;
+                  final status = itemHistories[index].status;
+                  Color statusColor = Colors.grey;
+                  if (status != null) {
+                    final statusLower = status.toLowerCase().trim();
+
+                    if (statusLower == 'normal') {
+                      statusColor = Colors.green.shade700;
+                    } else if (statusLower == 'low') {
+                      statusColor = Colors.orange.shade600;
+                    } else if (statusLower == 'high') {
+                      statusColor = Colors.orange.shade800;
+                    } else if (statusLower == 'very high') {
+                      statusColor = Colors.red.shade700;
+                    } else if (statusLower == 'dangerously high') {
+                      statusColor = Colors.red.shade900;
+                    } else if (statusLower == 'stage 1') {
+                      statusColor = Colors.green.shade600;
+                    } else if (statusLower == 'stage 2') {
+                      statusColor = Colors.yellow.shade800;
+                    } else if (statusLower == 'stage 3') {
+                      statusColor = Colors.orange.shade700;
+                    } else if (statusLower == 'stage 4') {
+                      statusColor = Colors.red.shade700;
+                    } else if (statusLower == 'stage 5') {
+                      statusColor = Colors.red.shade900;
+                    }
+                  }
+                  return Card(
+                    color: const Color.fromARGB(255, 242, 240, 240),
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    Text(
-                      history.date.split(' ')[1],
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                month,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                day,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            width: 100,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  hour,
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  '$value  $unit',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 60,
+                            child: Text(
+                              status ?? 'Status',
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: statusColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        history.time,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Weight: ${history.weight}',
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        'BP: ${history.bp}',
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.arrow_forward_ios, color: Colors.grey),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+                  );
+                },
+              );
   }
 }
 
-class VitalsHistory {
-  final String date;
-  final String time;
-  final String weight;
-  final String bp;
+class ItemHistory {
+  String? date;
+  double? value;
+  String? unit;
+  String? status;
+  ItemHistory({this.date, this.value, this.unit, this.status});
 
-  VitalsHistory({
-    required this.date,
-    required this.time,
-    required this.weight,
-    required this.bp,
-  });
+  ItemHistory.fromJson(Map<String, dynamic> json) {
+    date = json['date'];
+    value = double.parse('${json['value']}');
+    unit = json['unit'];
+    status = json['status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['date'] = date;
+    data['value'] = value;
+    data['unit'] = unit;
+    data['status'] = status;
+    return data;
+  }
 }
