@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_app_2/app/utilities/constants.dart';
@@ -22,6 +23,12 @@ class _VitalTrendState extends State<VitalTrend> {
   final List<String> _ranges = ['1W', '1M', '6M', '1Y'];
   int _selectedRangeIndex = 3;
   String range = '1Y';
+  bool onClick = false;
+  bool isSending = false;
+
+  final weightController = TextEditingController();
+  final systolicController = TextEditingController();
+  final diastolicController = TextEditingController();
 
   void _onRangeSelected(int index) {
     if (_selectedRangeIndex != index) {
@@ -86,6 +93,42 @@ class _VitalTrendState extends State<VitalTrend> {
     }
   }
 
+  Future<void> addNewVitalInfo(
+      double weight, double systolic, double diastolic) async {
+    try {
+      setState(() {
+        isSending = true;
+      });
+      final hnNumber = await AuthLocalDataSourceImpl().getHnNumber();
+      final response = await ApiService().post(
+        'patients/$hnNumber/vitals',
+        {
+          "weight": weight,
+          "systolic": systolic,
+          "diastolic": diastolic,
+        },
+      );
+      if (response.statusCode == 201) {
+        fetchHistory();
+        fetchVitalTrend();
+      } else {
+        throw Exception('Error send the data ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error send the data $e');
+    } finally {
+      setState(() {
+        isSending = false;
+      });
+    }
+  }
+
+  void clearText() {
+    weightController.clear();
+    systolicController.clear();
+    diastolicController.clear();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -94,6 +137,15 @@ class _VitalTrendState extends State<VitalTrend> {
     range = '1Y';
     fetchVitalTrend();
     fetchHistory();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    weightController.dispose();
+    systolicController.dispose();
+    diastolicController.dispose();
   }
 
   @override
@@ -112,13 +164,304 @@ class _VitalTrendState extends State<VitalTrend> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return Container(
-                  height: 500,
-                  color: Colors.red,
-                );
-              });
+            isDismissible: false,
+            isScrollControlled: true,
+            context: context,
+            builder: (context) {
+              return AnimatedContainer(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                height: onClick ? 800 : 500,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                duration: Duration(milliseconds: 300),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Align(
+                      alignment: AlignmentGeometry.center,
+                      child: Card(
+                        color: Colors.grey,
+                        child: const SizedBox(
+                          width: 80,
+                          height: 8,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Add New Vital Info',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              onClick = false;
+                            });
+                            clearText();
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            CupertinoIcons.xmark,
+                            size: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Fill In the value below!',
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Weight',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        TextFormField(
+                          keyboardType: TextInputType.phone,
+                          onTap: () {
+                            setState(() {
+                              onClick = true;
+                            });
+                          },
+                          onFieldSubmitted: (value) {
+                            setState(() {
+                              onClick = false;
+                            });
+                          },
+                          controller: weightController,
+                          decoration: InputDecoration(
+                            hintText: 'e.g., 75',
+                            hintStyle: TextStyle(
+                              color: Colors.grey,
+                            ),
+                            filled: true,
+                            fillColor: Color(0xffa6c7cfff),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(16),
+                              ),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 15.0,
+                              horizontal: 20.0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Systolic',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.44,
+                              child: TextFormField(
+                                keyboardType: TextInputType.phone,
+                                onFieldSubmitted: (value) {
+                                  setState(() {
+                                    onClick = false;
+                                  });
+                                },
+                                onTap: () {
+                                  setState(() {
+                                    onClick = true;
+                                  });
+                                },
+                                controller: systolicController,
+                                decoration: InputDecoration(
+                                  hintText: 'e.g., 120',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                  filled: true,
+                                  fillColor: Color(0xffa6c7cfff),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(16),
+                                    ),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 15.0,
+                                    horizontal: 20.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Diastolic',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.44,
+                              child: TextFormField(
+                                keyboardType: TextInputType.phone,
+                                onFieldSubmitted: (value) {
+                                  setState(() {
+                                    onClick = false;
+                                  });
+                                },
+                                onTap: () {
+                                  setState(() {
+                                    onClick = true;
+                                  });
+                                },
+                                controller: diastolicController,
+                                decoration: InputDecoration(
+                                  hintText: 'e.g., 80',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                  filled: true,
+                                  fillColor: Color(0xffa6c7cfff),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(16),
+                                    ),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    vertical: 15.0,
+                                    horizontal: 20.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: TextButton(
+                        onPressed: () async {
+                          await addNewVitalInfo(
+                            double.parse(
+                              weightController.text.trim(),
+                            ),
+                            double.parse(
+                              systolicController.text.trim(),
+                            ),
+                            double.parse(
+                              diastolicController.text.trim(),
+                            ),
+                          );
+                          setState(() {
+                            onClick = false;
+                          });
+                          clearText();
+                          Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadiusGeometry.circular(15),
+                            )),
+                        child: isSending
+                            ? CircularProgressIndicator()
+                            : Text(
+                                'Save Reading',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            onClick = false;
+                          });
+                          clearText();
+                          Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadiusGeometry.circular(15),
+                            )),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          );
         },
         backgroundColor: Colors.blue,
         child: const Icon(
