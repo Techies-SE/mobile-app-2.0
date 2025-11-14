@@ -54,7 +54,7 @@ class _MedicalCheckupState extends State<MedicalCheckup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff7fcff),
+      backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,

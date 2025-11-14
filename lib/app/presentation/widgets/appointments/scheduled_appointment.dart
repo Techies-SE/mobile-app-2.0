@@ -35,7 +35,7 @@ class ScheduledAppointment extends StatelessWidget {
       DateFormat('HH:mm:ss').parse(time.split('.')[0]),
     );
     return Container(
-      height: 160,
+      height: 120,
       decoration: BoxDecoration(
         border: Border.all(
           color: mainBgColor,
@@ -144,50 +144,50 @@ class ScheduledAppointment extends StatelessWidget {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    context.read<AppointmentBloc>().add(
-                          CancelRescheduledAppoinmentEvent(
-                              appointmentId: appointmentId),
-                        );
-                  },
-                  style: TextButton.styleFrom(
-                      fixedSize: Size(132, 28),
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        side: BorderSide(color: mainBgColor),
-                      )),
-                  child: Text(
-                    'Cancel',
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      color: mainBgColor,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  style: TextButton.styleFrom(
-                      fixedSize: Size(132, 28),
-                      backgroundColor: mainBgColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        side: BorderSide(color: mainBgColor),
-                      )),
-                  child: Text(
-                    'Reschedule',
-                    style: GoogleFonts.inter(
-                      fontSize: 13,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            )
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     TextButton(
+            //       onPressed: () {
+            //         context.read<AppointmentBloc>().add(
+            //               CancelRescheduledAppoinmentEvent(
+            //                   appointmentId: appointmentId),
+            //             );
+            //       },
+            //       style: TextButton.styleFrom(
+            //           fixedSize: Size(132, 28),
+            //           backgroundColor: Colors.white,
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(5),
+            //             side: BorderSide(color: mainBgColor),
+            //           )),
+            //       child: Text(
+            //         'Cancel',
+            //         style: GoogleFonts.inter(
+            //           fontSize: 13,
+            //           color: mainBgColor,
+            //         ),
+            //       ),
+            //     ),
+            //     TextButton(
+            //       onPressed: () {},
+            //       style: TextButton.styleFrom(
+            //           fixedSize: Size(132, 28),
+            //           backgroundColor: mainBgColor,
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(5),
+            //             side: BorderSide(color: mainBgColor),
+            //           )),
+            //       child: Text(
+            //         'Reschedule',
+            //         style: GoogleFonts.inter(
+            //           fontSize: 13,
+            //           color: Colors.white,
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // )
           ],
         ),
       ),

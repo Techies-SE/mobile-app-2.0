@@ -79,7 +79,7 @@ class _VitalHistoriesState extends State<VitalHistories> {
     final hourFormatter = DateFormat('hh:mm');
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,

@@ -153,12 +153,12 @@ class _VitalTrendState extends State<VitalTrend> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          'Historical Trend',
+          'Health Vitals',
           // ignore: undefined_identifier
           style: appbarTestStyle,
         ),
@@ -269,7 +269,7 @@ class _VitalTrendState extends State<VitalTrend> {
                               color: Colors.grey,
                             ),
                             filled: true,
-                            fillColor: Color(0xffa6c7cfff),
+                            fillColor: Color(0xffedfaf1),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(16),
@@ -324,7 +324,7 @@ class _VitalTrendState extends State<VitalTrend> {
                                     color: Colors.grey,
                                   ),
                                   filled: true,
-                                  fillColor: Color(0xffa6c7cfff),
+                                  fillColor:Color(0xffedfaf1),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(16),
@@ -374,7 +374,7 @@ class _VitalTrendState extends State<VitalTrend> {
                                     color: Colors.grey,
                                   ),
                                   filled: true,
-                                  fillColor: Color(0xffa6c7cfff),
+                                  fillColor: Color(0xffedfaf1),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(16),
@@ -433,16 +433,17 @@ class _VitalTrendState extends State<VitalTrend> {
                           Navigator.pop(context);
                         },
                         style: TextButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                            backgroundColor: mainBgColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadiusGeometry.circular(15),
                             )),
                         child: isSending
                             ? CircularProgressIndicator()
                             : Text(
-                                'Save Reading',
+                                'Update Reading',
                                 style: TextStyle(
                                   color: Colors.white,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                       ),
@@ -469,7 +470,7 @@ class _VitalTrendState extends State<VitalTrend> {
                         child: Text(
                           'Cancel',
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: mainBgColor,
                           ),
                         ),
                       ),
@@ -480,7 +481,7 @@ class _VitalTrendState extends State<VitalTrend> {
             },
           );
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: mainBgColor,
         child: const Icon(
           Icons.add,
           color: Colors.white,
@@ -488,116 +489,30 @@ class _VitalTrendState extends State<VitalTrend> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
         child: SingleChildScrollView(
           child: Column(
             children: [
               histories.isEmpty
                   ? SizedBox()
                   : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Card(
-                          color: Color(0xffedfaf1),
-                          child: SizedBox(
-                            height: 90,
-                            width: 150,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0,
-                                vertical: 8,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 15,
-                                        backgroundColor: Colors.teal,
-                                        child: Icon(
-                                          Icons.monitor_weight_outlined,
-                                          color: Colors.white,
-                                          size: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Latest Weight',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  Text(
-                                    '${histories[0]['weight']} kg',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                        _InfoCard(
+                          icon: Icons.monitor_weight_outlined,
+                          title: 'Latest Weight',
+                          value: '${histories[0]['weight']} kg',
+                          cardColor: const Color(0xffedfaf1),
+                          iconBgColor: Colors.teal,
                         ),
-                        Card(
-                          color: Colors.lightBlue.shade100,
-                          child: SizedBox(
-                            height: 90,
-                            width: 150,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0,
-                                vertical: 8,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 15,
-                                        backgroundColor: Colors.cyan,
-                                        child: Icon(
-                                          Icons.bloodtype,
-                                          color: Colors.white,
-                                          size: 16,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 4,
-                                      ),
-                                      Text(
-                                        'Latest BP',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 12,
-                                  ),
-                                  Text(
-                                    '${histories[0]['systolic']}/${histories[0]['diastolic']}',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
+                        _InfoCard(
+                          icon: Icons.bloodtype,
+                          title: 'Latest BP',
+                          value:
+                              '${histories[0]['systolic']}/${histories[0]['diastolic']}',
+                          cardColor: const Color(0xFFedf6fc),
+                          iconBgColor: const Color(0xFFa0d2ea),
+                        ),
                       ],
                     ),
               const SizedBox(height: 16),
@@ -683,10 +598,12 @@ class _VitalTrendState extends State<VitalTrend> {
                         ),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       'See All',
                       style: TextStyle(
-                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                        decorationColor: mainBgColor,
+                        color: mainBgColor,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1001,5 +918,74 @@ class _VitalTrendState extends State<VitalTrend> {
                   );
                 },
               );
+  }
+}
+
+
+class _InfoCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String value;
+  final Color cardColor;
+  final Color iconBgColor;
+
+  const _InfoCard({
+    required this.icon,
+    required this.title,
+    required this.value,
+    required this.cardColor,
+    required this.iconBgColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shadowColor: Colors.grey.withOpacity(0.2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      color: cardColor,
+      child: Container(
+        height: 100,
+        width: 150,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: iconBgColor,
+                  child: Icon(icon, color: Colors.white, size: 18),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      color: Colors.black87,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

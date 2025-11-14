@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app_2/Features/auth/presentation/screens/login.dart';
+import 'package:mobile_app_2/app/presentation/screens/main_navi_screens/ascvd_calculator.dart';
 import 'package:mobile_app_2/app/presentation/screens/medical_checkup/medical_checkup.dart';
 import 'package:mobile_app_2/app/presentation/screens/medical_checkup/vital_trend.dart';
 import 'package:mobile_app_2/app/presentation/screens/schedule/all_departments.dart';
@@ -382,7 +383,7 @@ class _HomeState extends State<Home> {
                               style: GoogleFonts.inter(
                                 fontSize: 12,
                                 color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           )),
@@ -393,8 +394,89 @@ class _HomeState extends State<Home> {
                   SizedBox(
                     height: 16,
                   ),
+                  // Card(
+                  //   color: Color.fromARGB(255, 172, 219, 210),
+                  //   elevation: 3,
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.symmetric(
+                  //         vertical: 10.0, horizontal: 10),
+                  //     child: Row(
+                  //       children: [
+                  //         CircleAvatar(
+                  //           backgroundColor: mainBgColor,
+                  //           child: Image.asset(
+                  //             'assets/images/robot.png',
+                  //             color: Colors.white,
+                  //             width: 20,
+                  //             height: 20,
+                  //           ),
+                  //         ),
+                  //         SizedBox(
+                  //           width: 10,
+                  //         ),
+                  //         Column(
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text(
+                  //               'Recommendation',
+                  //               style: GoogleFonts.inter(
+                  //                 fontSize: 13,
+                  //                 fontWeight: FontWeight.w600,
+                  //               ),
+                  //             ),
+                  //             SizedBox(
+                  //               width: 200,
+                  //               child: Text(
+                  //                 'Check reliable AI Recommendations',
+                  //                 maxLines: 1,
+                  //                 overflow: TextOverflow.ellipsis,
+                  //                 style: GoogleFonts.inter(
+                  //                   fontSize: 10,
+                  //                   fontWeight: FontWeight.w400,
+                  //                 ),
+                  //               ),
+                  //             )
+                  //           ],
+                  //         ),
+                  //         SizedBox(
+                  //           width: 10,
+                  //         ),
+                  //         Expanded(
+                  //             child: ElevatedButton(
+                  //           style: ElevatedButton.styleFrom(
+                  //               padding: EdgeInsets.zero,
+                  //               backgroundColor: mainBgColor,
+                  //               shape: RoundedRectangleBorder(
+                  //                 borderRadius: BorderRadius.circular(10),
+                  //               )),
+                  //           onPressed: () {
+                  //             Navigator.push(
+                  //               context,
+                  //               MaterialPageRoute(
+                  //                 builder: (context) => MainNaviBar(
+                  //                   pageIndex: 1,
+                  //                 ),
+                  //               ),
+                  //             );
+                  //           },
+                  //           child: Text(
+                  //             'View',
+                  //             style: GoogleFonts.inter(
+                  //               fontSize: 12,
+                  //               color: Colors.white,
+                  //               fontWeight: FontWeight.w500,
+                  //             ),
+                  //           ),
+                  //         )),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   height: 16,
+                  // ),
                   Card(
-                    color: Color.fromARGB(255, 172, 219, 210),
+                    color: Color(0xfff0eeea),
                     elevation: 3,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -402,90 +484,9 @@ class _HomeState extends State<Home> {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor: mainBgColor,
-                            child: Image.asset(
-                              'assets/images/robot.png',
-                              color: Colors.white,
-                              width: 20,
-                              height: 20,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Recommendation',
-                                style: GoogleFonts.inter(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 200,
-                                child: Text(
-                                  'Check reliable AI Recommendations',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                              child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                backgroundColor: mainBgColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                )),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MainNaviBar(
-                                    pageIndex: 1,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              'View',
-                              style: GoogleFonts.inter(
-                                fontSize: 12,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          )),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Card(
-                    color: Color.fromARGB(255, 145, 183, 233),
-                    elevation: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 10),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: Color.fromARGB(255, 78, 118, 168),
+                            backgroundColor: Color(0xffd9c8bf),
                             child: Icon(
-                              Icons.health_and_safety_outlined,
+                              Icons.insights,
                               size: 24,
                               color: Colors.white,
                             ),
@@ -497,7 +498,7 @@ class _HomeState extends State<Home> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Vital Info',
+                                'Vital History',
                                 style: GoogleFonts.inter(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -524,8 +525,7 @@ class _HomeState extends State<Home> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.zero,
-                                  backgroundColor:
-                                      Color.fromARGB(255, 78, 118, 168),
+                                 backgroundColor: Color(0xffd9c8bf),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   )),
@@ -542,7 +542,7 @@ class _HomeState extends State<Home> {
                                 style: GoogleFonts.inter(
                                   fontSize: 12,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -551,6 +551,87 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Card(
+                    // color: Color(0xff97b3ae),
+                      color: Color(0xffd2e0d3),
+                    elevation: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Color(0xff97b3ae),
+                            child: Icon(
+                              Icons.monitor_heart,
+                              size: 24,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'ASCVD',
+                                style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 200,
+                                child: Text(
+                                  'Calculate 10-Year ASCVD Risk',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  backgroundColor:
+                                       Color(0xff97b3ae),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  )),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ASCVDCalculatorPage(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Calculate',
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                 ],
               ),
             )

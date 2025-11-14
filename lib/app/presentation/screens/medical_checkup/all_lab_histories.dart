@@ -80,7 +80,7 @@ class _AllLabHistoriesState extends State<AllLabHistories> {
     final hourFormatter = DateFormat('hh:mm');
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,

@@ -110,7 +110,7 @@ class _LabItemTrendState extends State<LabItemTrend> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
